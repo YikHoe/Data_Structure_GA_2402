@@ -2,12 +2,18 @@
 //
 
 #include <iostream>
+#include "LinkedList.h"
 
 using namespace std;
 
 int main()
 {
-    cout << "Testing" << endl;
+	class LinkedList list1;
+	list1.insertFront("The room is dirty and unsanitary", "2");
+	list1.insertFront("The room is beautiful and clean", "5");
+	list1.insertFront("The service is like shit and the room are filled with trash", "1");
+
+	list1.displayList();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
