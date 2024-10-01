@@ -17,7 +17,7 @@ class FileHandler {
         void readReviewsFromCSV(const string& filename) {
             ifstream file(filename);
             if (!file.is_open()) {
-                std::cout << "Error opening CSV file: " << filename << std::endl;
+                cout << "Error opening CSV file: " << filename << endl;
                 return;
             }
 
@@ -42,7 +42,7 @@ class FileHandler {
     private:
         void sanitize(string& line){
             size_t commaPos = line.rfind(',');
-            if (commaPos != std::string::npos) {
+            if (commaPos != string::npos) {
                 string reviewText = line.substr(0, commaPos);
                 string rating = line.substr(commaPos + 1);
                 cout << reviewText << endl;
