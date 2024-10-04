@@ -3,30 +3,29 @@
 
 #include <iostream>
 #include "LinkedList.h"
-#include "FileIO.h"
+#include "WordLinkedList.h"
+#include "FileHandler.h"
 
 
 using namespace std;
 
 int main()
 {
-	class LinkedList list1;
 	class FileHandler fileHandler;
-	list1.insertFront("The room is dirty and unsanitary", "2");
-	list1.insertFront("The room is beautiful and clean", "5");
-	list1.insertFront("The service is like shit and the room are filled with trash", "1");
-	fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv");
 
-	list1.displayList();
+	LinkedList reviewList = fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv");
+	WordLinkedList positiveList = fileHandler.readWordFromText("positive-words.txt");
+	WordLinkedList negativeList = fileHandler.readWordFromText("negative-words.txt");
+
+
+	//reviewList.displayList();
+	//positiveList.displayList();
+	//negativeList.displayList();
+	LinkedList foundList = reviewList.search(positiveList, negativeList);
+	foundList.displayList();
+
+
+	
+
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
