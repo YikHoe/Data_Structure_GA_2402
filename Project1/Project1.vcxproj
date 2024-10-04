@@ -131,11 +131,13 @@
     <ClCompile Include="FileHandler.h" />
     <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="QuickSort.cpp" />
     <ClCompile Include="WordLinkedList.cpp" />
     <ClCompile Include="WordLinkedList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="QuickSort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

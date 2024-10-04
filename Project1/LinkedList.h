@@ -8,7 +8,6 @@ struct Node
 	string review, rating, word;
 	Node* nextAddress;
 	Node(string review_string, string rating_given, string word_founded);
-	Node();
 };
 
 class LinkedList

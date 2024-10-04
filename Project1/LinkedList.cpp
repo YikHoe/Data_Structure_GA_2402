@@ -5,8 +5,6 @@
 
 Node::Node(string review_string, string rating_given, string word_founded) : review(review_string), rating(rating_given), word(word_founded), nextAddress(nullptr) {}
 
-Node::Node() {}
-
 LinkedList::LinkedList() : head(nullptr) {}
 
 LinkedList LinkedList::search(const WordLinkedList& positiveList, const WordLinkedList& negativeList) {
