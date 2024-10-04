@@ -1,5 +1,7 @@
 #pragma once
+#if 0
 #include <iostream>
+#include "LinkedList.h"
 
 using namespace std;
 
@@ -12,9 +14,12 @@ struct Node {
 class QuickSort
 {
 private:
+	LinkedList linkedList;
 	Node* partition(Node* start, Node* end, Node** newHead, Node** newEnd);
 
 public:
 	QuickSort();
 	void sort(Node* start, Node* end);
 };
+
+#endif

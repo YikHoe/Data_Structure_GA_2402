@@ -27,7 +27,7 @@ LinkedList FileHandler::readReviewsFromCSV(const string& filename) {
     return reviewList;
 }
 
-WordLinkedList FileHandler::readWordFromText(const string& filename) {
+LinkedList FileHandler::readWordFromText(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) {
         cout << "Error opening CSV file: " << filename << endl;
@@ -35,7 +35,6 @@ WordLinkedList FileHandler::readWordFromText(const string& filename) {
     }
 
     string line;
-
 
     while (getline(file, line)) {
         wordList.insertFront(line);
@@ -51,7 +50,7 @@ void FileHandler::sanitize(string& line) {
     if (commaPos != string::npos) {
         string reviewText = line.substr(0, commaPos);
         string rating = line.substr(commaPos + 1);
-        reviewList.insertFront(reviewText, rating,"");
+        reviewList.insertFront(reviewText, rating);
     }
 
 }

@@ -1,7 +1,10 @@
 #include <iostream>
 #include "QuickSort.h"
+#if 0
 
 using namespace std;
+
+QuickSort::QuickSort() {}
 
 Node* QuickSort::partition(Node* start, Node* end, Node** newHead, Node** newEnd) {
     Node* pivot = end;
@@ -43,3 +46,5 @@ Node* QuickSort::partition(Node* start, Node* end, Node** newHead, Node** newEnd
     *newEnd = tail;
     return pivot;
 }
+
+#endif

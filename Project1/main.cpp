@@ -13,19 +13,15 @@ int main()
 {
 	class FileHandler fileHandler;
 
-	LinkedList reviewList = fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv");
-	WordLinkedList positiveList = fileHandler.readWordFromText("positive-words.txt");
-	WordLinkedList negativeList = fileHandler.readWordFromText("negative-words.txt");
+	//LinkedList reviewList = fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv");
+	//WordLinkedList positiveList = fileHandler.readWordFromText("positive-words.txt");
+	//WordLinkedList negativeList = fileHandler.readWordFromText("negative-words.txt");
 
+	LinkedList reviewsList =  fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv");
+	LinkedList positiveList = fileHandler.readWordFromText("positive-words.txt");
+	LinkedList negativeList = fileHandler.readWordFromText("negative-words.txt");
 
-	//reviewList.displayList();
-	//positiveList.displayList();
-	//negativeList.displayList();
-	LinkedList foundList = reviewList.search(positiveList, negativeList);
-	foundList.displayList();
-
-
-	
-
+	reviewsList.displayList();
+	positiveList.displayList();
 }
 

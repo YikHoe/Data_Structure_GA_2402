@@ -1,6 +1,5 @@
 #include <string>
-#ifndef WORDLINKEDLIST
-#define WORDLINKEDLIST
+#if 0
 
 using namespace std;
 
