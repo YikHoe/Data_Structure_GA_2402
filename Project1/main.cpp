@@ -1,27 +1,160 @@
 // Project1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
 #include <iostream>
-#include "LinkedList.h"
-#include "WordLinkedList.h"
-#include "FileHandler.h"
+#include "Array.hpp"
+#include <string>
+#include <fstream>
+#include <utility>
+#include <sstream>
 
+// Read words from a file and store them in array
+void readWordsFromFile(const string& filename, Array<string>& stringArray) {
+    ifstream file(filename);
+    if (!file) {
+        cerr << "Error opening file: " << filename << endl;
+        return;
+    }
 
-using namespace std;
+    string word;
+    while (file >> word) {
+        stringArray.insert(word);
+    }
+    file.close();
+}
+
+// Read reviews from a CSV file
+void readReviewsFromCSV(const string& filename, Array<pair<string, int>>& hotelReview) {
+    ifstream file(filename);
+    if (!file) {
+        cerr << "Error opening CSV file: " << filename << endl;
+        return;
+    }
+
+    string line;
+    // Skip header
+    getline(file, line);
+
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string review;
+        int rating;
+
+        int commaPos = line.rfind(',');
+        if (commaPos != string::npos) {
+            review = line.substr(0, commaPos);
+            rating = stoi(line.substr(commaPos + 1));
+
+            hotelReview.insert(make_pair(review, rating));
+        }
+    }
+}
+
+// Count positive and negative words in a review
+void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords, int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords) {
+    positiveCount = 0;
+    negativeCount = 0;
+
+    // Split review into words
+    stringstream ss(review);
+    string word;
+    while (ss >> word) {
+        bool isPositive = false;
+        // Check if word is in positive or negative words list
+        for (int i = 0; i < positiveWords.getSize(); i++) {
+            if (word == positiveWords.get(i)) {
+                positiveCount++;
+                foundPositiveWords.insert(word);
+                isPositive = true;
+                break;
+            }
+        }
+        // Run only if the word is not found in positive, Reduce redundancy
+        if (!isPositive) {
+            for (int i = 0; i < negativeWords.getSize(); i++) {
+                if (word == negativeWords.get(i)) {
+                    negativeCount++;
+                    foundNegativeWords.insert(word);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+// Calculate the normalized sentiment score
+float calculateSentimentScore(int positiveCount, int negativeCount) {
+    int N = positiveCount + negativeCount;
+    int rawScore = positiveCount - negativeCount;
+    int minRawScore = -N;
+    int maxRawScore = N;
+
+    if (maxRawScore == minRawScore) return 3.0f; // If no range, neutral score
+
+    float normalizedScore = float(rawScore - minRawScore) / (maxRawScore - minRawScore);
+    return 1.0f + (4.0f * normalizedScore); // Scale between 1 and 5
+}
+
+// Display sentiment summary
+void summarizeSentiment(Array<pair<string, int>>& hotelReviews, Array<string>& positiveWords, Array<string>& negativeWords) {
+    int totalPositiveReviews = 0;
+    int totalNegativeReviews = 0;
+    int totalNeutralReviews = 0;
+
+    for (int i = 0; i < hotelReviews.getSize(); i++) {
+        string review = hotelReviews.get(i).first;
+        int rating = hotelReviews.get(i).second;
+
+        Array<string> foundPositiveWords;
+        Array<string> foundNegativeWords;
+        int positiveCount = 0, negativeCount = 0;
+        countPositiveNegativeWords(review, positiveWords, negativeWords, positiveCount, negativeCount, foundPositiveWords, foundNegativeWords);
+        //display user review
+        cout << "Review " << i + 1 << ":" << review << endl;
+        //display positive word count and list
+        cout << "Positive words \t\t: " << positiveCount << endl;
+        for (int j = 0; j < foundPositiveWords.getSize(); j++) {
+            cout << "\t- " << foundPositiveWords.get(j) << endl;
+        }
+
+        //display negative word count and list
+        cout << "Negative words \t\t: " << negativeCount << endl;
+        for (int j = 0; j < foundNegativeWords.getSize(); j++) {
+            cout << "\t- " << foundNegativeWords.get(j) << endl;
+        }
+
+        cout << endl;
+        float sentimentScore = calculateSentimentScore(positiveCount, negativeCount);
+        int roundScore = round(sentimentScore);
+        // display sentiment score
+        cout << "Sentiment score (1-5) \t= " << sentimentScore << ", thus the rating should be equal to " << roundScore << endl;
+        // display user rating
+        cout << "User Ratings \t\t= " << rating << endl;
+        // evaluate the accuracy 
+        if (abs(roundScore - rating) < 1.0) {
+            cout << "Analysis output: User's subjective evaluation matches the sentiment score provided by the analysis." << endl;
+            cout << "There is a consistency between the sentiment score generated by the analysis and the user's evaluation of the sentiment." << endl;
+        }
+        else {
+            cout << "Analysis output: User's subjective evaluation does not match the sentiment score provided by the analysis." << endl;
+            cout << "There is an inconsistency between the sentiment score generated by the analysis and the user's evaluation of the sentiment." << endl;
+        }
+        cout << endl;
+    }
+}
 
 int main()
 {
-	class FileHandler fileHandler;
+    Array<string> positiveWords, negativeWords;
+    Array<pair<string, int>> hotelReviews;
+    readWordsFromFile("positive-words.txt", positiveWords);
+    cout << positiveWords.getSize() << endl;
+    cout << positiveWords.getCapacity() << endl;
+    readWordsFromFile("negative-words.txt", negativeWords);
+    cout << negativeWords.getSize() << endl;
+    cout << negativeWords.getCapacity() << endl;
+    readReviewsFromCSV("test.csv", hotelReviews);
+    cout << hotelReviews.getSize() << endl;
 
-	//LinkedList reviewList = fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv");
-	//WordLinkedList positiveList = fileHandler.readWordFromText("positive-words.txt");
-	//WordLinkedList negativeList = fileHandler.readWordFromText("negative-words.txt");
-
-	LinkedList reviewsList =  fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv");
-	LinkedList positiveList = fileHandler.readWordFromText("positive-words.txt");
-	LinkedList negativeList = fileHandler.readWordFromText("negative-words.txt");
-
-	reviewsList.displayList();
-	positiveList.displayList();
+    summarizeSentiment(hotelReviews, positiveWords, negativeWords);
+    return 0;
 }
-
