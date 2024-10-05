@@ -1,4 +1,4 @@
-﻿  FileIO.h
-  main.cpp
-  Generating Code...
-  Project1.vcxproj -> C:\Users\yizun\OneDrive\Documents\GitHub\Data_Structure_GA_2402\x64\Debug\Project1.exe
+﻿  main.cpp
+C:\Users\Predator\OneDrive - Asia Pacific University\Current Assignments\DSTR\DSTR Part 1 Code\Data_Structure_GA_2402\Project1\main.cpp(42,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Predator\OneDrive - Asia Pacific University\Current Assignments\DSTR\DSTR Part 1 Code\Data_Structure_GA_2402\Project1\main.cpp(127,24): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  Project1.vcxproj -> C:\Users\Predator\OneDrive - Asia Pacific University\Current Assignments\DSTR\DSTR Part 1 Code\Data_Structure_GA_2402\x64\Debug\Project1.exe
