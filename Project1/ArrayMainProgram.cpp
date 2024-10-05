@@ -314,65 +314,127 @@ void linearSearch(Array<pair<string, int>>& positiveAndNegativeWords) {
 
 }
 
-//int binarySearch(Array<pair<string, int>>& positiveAndNegativeWords, int low, int high, int targetFreq) {
-//    while (low <= high) {
-//        int mid = (low + high) / 2;
-//        int wordFreq = positiveAndNegativeWords.get(mid).second;
-//        if (wordFreq == targetFreq) {
-//            return mid;
-//        }
-//        else if (wordFreq < targetFreq) {
-//            low = mid + 1;
-//        }
-//        else {
-//            high = mid - 1;
-//        }
-//    }
-//    return -1;
-//}
-//
-//// Binary search for max and min word 
-//void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<pair<Array<string>, Array<string>>>& maxMinWords) {
-//    int lowInd = 0;
-//    int highInd = positiveAndNegativeWords.getSize() - 1;
-//    int maxFreq = INT_MIN;
-//    int minFreq = INT_MAX;
-//    Array<string> maxWords;
-//    Array<string> minWords;
-//
-//    //get maxFreq
-//    for (int i = 0; i < positiveAndNegativeWords.getSize(); i++) {
-//        int currentFreq = positiveAndNegativeWords.get(i).second;
-//        if (currentFreq > maxFreq) {
-//            maxFreq = currentFreq;
-//        }
-//        if (currentFreq < minFreq) {
-//            minFreq = currentFreq;
-//        }
-//    }
-//
-//    //search for max freq
-//    int maxIndex = binarySearch(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1, maxFreq);
-//    if (maxIndex != -1) {
-//        for (int i = maxIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == maxFreq; i++) {
-//            maxWords.insert(positiveAndNegativeWords.get(i).first); // Insert max words
-//        }
-//    }
-//
-//    // Search for min freq
-//    int minIndex = binarySearch(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1, minFreq);
-//    if (minIndex != -1) {
-//        for (int i = minIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i--) {
-//            minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
-//        }
-//        // If there are multiple min frequency words, also check the right side
-//        for (int i = minIndex + 1; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i++) {
-//            minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
-//        }
-//    }
-//    // Store results in maxMinWords
-//    maxMinWords.insert(make_pair(maxWords, minWords));
-//}
+void binarySearch(Array<pair<string, int>>& positiveAndNegativeWords, int low, int high, int targetFreq, Array<bool>& visited, int result[]) {
+    if (low <= high) {
+        int mid = (low + high) / 2;
+        int wordFreq = positiveAndNegativeWords.get(mid).second;
+
+        //make sure the wordFreq is not visited
+        if (wordFreq == targetFreq && !visited.get(mid)){
+            // Update leftmost occurrence
+            if (mid < result[0]) {
+                result[0] = mid;
+            }
+
+            // Update rightmost occurrence
+            if (mid > result[1]) {
+                result[1] = mid;
+            }
+
+            //Mark the index as visited
+            visited.update(mid, true);
+
+            //Continue search in diff direction 
+            binarySearch(positiveAndNegativeWords, low, mid - 1, targetFreq, visited, result);
+            binarySearch(positiveAndNegativeWords, mid + 1, high, targetFreq, visited, result);
+        }
+        else if (wordFreq < targetFreq) {
+            // Search the right half
+            binarySearch(positiveAndNegativeWords, mid + 1, high, targetFreq, visited, result);
+        }
+        else {
+            // Search the left half
+            binarySearch(positiveAndNegativeWords, low, mid - 1, targetFreq, visited, result);
+        }
+    }
+}
+
+// Binary search for max and min word 
+void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords) {
+    int lowInd = 0;
+    int highInd = positiveAndNegativeWords.getSize() - 1;
+    int maxFreq = INT_MIN;
+    int minFreq = INT_MAX;
+    Array<string> maxWords;
+    Array<string> minWords;
+    cout << "Hi" << endl;
+    Array<bool> visited(positiveAndNegativeWords.getSize(), false);
+
+    //get maxFreq and minFreq
+    for (int i = 0; i < positiveAndNegativeWords.getSize(); i++) {
+        if (positiveAndNegativeWords.get(i).second > 0) {
+            int currentFreq = positiveAndNegativeWords.get(i).second;
+            if (currentFreq > maxFreq) {
+                maxFreq = currentFreq;
+            }
+            if (currentFreq < minFreq) {
+                minFreq = currentFreq;
+            }
+        }
+    }
+
+    cout << "Min ferq" << minFreq << endl;
+
+    // Store the leftmost and rightmost
+    int maxResult[2] = { INT_MAX, INT_MIN };
+    int minResult[2] = { INT_MAX, INT_MIN }; // {leftmost, rightmost}
+
+    binarySearch(positiveAndNegativeWords, lowInd, highInd, maxFreq, visited, maxResult);
+    cout << "Stop point 1" << endl;
+    // Collect word with max freq
+    for (int i = maxResult[0]; i <= maxResult[1]; i++) {
+        //might add if statement to double check the word frequency
+        maxWords.insert(positiveAndNegativeWords.get(i).first);
+    }
+
+    //reset visited
+    for (int i = 0; i < visited.getSize(); i++) {
+        visited.update(i, false);
+    }
+
+    binarySearch(positiveAndNegativeWords, 0, highInd, minFreq, visited, minResult);
+
+    // Collect words with minFreq
+    for (int i = minResult[0]; i <= minResult[1]; i++) {
+        if (positiveAndNegativeWords.get(i).second == minFreq) {
+            minWords.insert(positiveAndNegativeWords.get(i).first);
+        }
+    }
+
+    cout << "Max Frequency Words: ";
+    for (int i = 0; i < maxWords.getSize(); i++) {
+        cout << maxWords.get(i) << " ";
+    }
+    cout << endl;
+
+    cout << "Min Frequency Words: ";
+    for (int i = 0; i < minWords.getSize(); i++) {
+        cout << minWords.get(i) << " ";
+    }
+    cout << endl;
+
+    ////search for max freq
+    //int maxIndex = binarySearch(positiveAndNegativeWords, lowInd, positiveAndNegativeWords.getSize() - 1, maxFreq, visited, object);
+    //if (maxIndex != -1) {
+    //    for (int i = maxIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == maxFreq; i++) {
+    //        maxWords.insert(positiveAndNegativeWords.get(i).first); // Insert max words
+    //    }
+    //}
+
+    //// Search for min freq
+    //int minIndex = binarySearch(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1, minFreq, visited);
+    //if (minIndex != -1) {
+    //    for (int i = minIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i--) {
+    //        minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
+    //    }
+    //    // If there are multiple min frequency words, also check the right side
+    //    for (int i = minIndex + 1; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i++) {
+    //        minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
+    //    }
+    //}
+    // Store results in maxMinWords
+    //maxMinWords.insert(make_pair(maxWords, minWords));
+}
 
 // Helper function to merge two subarrays
 void merge(Array<pair<string, int>>& arr, int left, int mid, int right) {
@@ -523,6 +585,6 @@ int main()
 
     displaySortedFrequencies(positiveAndNegativeWords);
     //linearSearch(positiveAndNegativeWords, maxMinWords);
-    displaySortedFrequencies(positiveAndNegativeWords);
+    searchAlgo(positiveAndNegativeWords);
     return 0;
 }
