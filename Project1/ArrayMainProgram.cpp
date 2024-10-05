@@ -53,6 +53,72 @@ void readReviewsFromCSV(const string& filename, Array<pair<string, int>>& hotelR
 }
 
 // Count positive and negative words in a review
+//linear search to search positive word
+void linearSearchForPositiveWords(Array<string>& positiveWords, string& word, int& positiveCount, Array<string>& foundPositiveWords, bool& isPositive) {
+    for (int i = 0; i < positiveWords.getSize(); i++) {
+        if (word == positiveWords.get(i)) {
+            positiveCount++;
+            foundPositiveWords.insert(word);
+            isPositive = true;
+            break;
+        }
+    }
+}
+
+//linear search to search negative word
+void linearSearchForNegativeWords(Array<string>& negativeWords, string& word, int& negativeCount, Array<string>& foundNegativeWords) {
+    for (int i = 0; i < negativeWords.getSize(); i++) {
+        if (word == negativeWords.get(i)) {
+            negativeCount++;
+            foundNegativeWords.insert(word);
+            break;
+        }
+    }
+}
+
+//binary search to search positive word
+void binarySearchForPositiveWords(Array<string>& positiveWords, string& word, int& positiveCount, Array<string>& foundPositiveWords, bool& isPositive) {
+    int low = 0;
+    int high = positiveWords.getSize() - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        string midWord = positiveWords.get(mid);
+        if (midWord == word) {
+            positiveCount++;
+            foundPositiveWords.insert(word);
+            isPositive = true;
+            break;
+        }
+        else if (midWord > word) {
+            high = mid - 1;
+        }
+        else {
+            low = mid + 1;
+        }
+    }
+}
+
+//binary search to search negative word
+void binarySearchForNegativeWords(Array<string>& negativeWords, string& word, int& negativeCount, Array<string>& foundNegativeWords) {
+    int low = 0;
+    int high = negativeWords.getSize() - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        string midWord = negativeWords.get(mid);
+        if (midWord == word) {
+            negativeCount++;
+            foundNegativeWords.insert(word);
+            break;
+        }
+        else if (midWord > word) {
+            high = mid - 1;
+        }
+        else {
+            low = mid + 1;
+        }
+    }
+}
+
 void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords, int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords) {
     positiveCount = 0;
     negativeCount = 0;
@@ -63,26 +129,20 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
     while (ss >> word) {
         bool isPositive = false;
         // Check if word is in positive or negative words list
-        for (int i = 0; i < positiveWords.getSize(); i++) {
-            if (word == positiveWords.get(i)) {
-                positiveCount++;
-                foundPositiveWords.insert(word);
-                isPositive = true;
-                break;
-            }
-        }
+        // Call linear search function
+        //linearSearchForPositiveWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
+        // Call binary search function
+        binarySearchForPositiveWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
         // Run only if the word is not found in positive, Reduce redundancy
         if (!isPositive) {
-            for (int i = 0; i < negativeWords.getSize(); i++) {
-                if (word == negativeWords.get(i)) {
-                    negativeCount++;
-                    foundNegativeWords.insert(word);
-                    break;
-                }
-            }
+            //Call linear search function
+            //linearSearchForNegativeWords(negativeWords, word, negativeCount, foundNegativeWords);
+            // Call binary search function
+            binarySearchForNegativeWords(negativeWords, word, negativeCount, foundNegativeWords);
         }
     }
 }
+
 
 // Calculate the normalized sentiment score
 float calculateSentimentScore(int positiveCount, int negativeCount) {
@@ -195,7 +255,7 @@ void countWordFrequency(Array<pair<string, int>>& hotelReviews, Array<pair<strin
 
 
 // Linear search for max and min word
-void linearSearch(Array<pair<string, int>>& positiveAndNegativeWords, Array<pair<Array<string>, Array<string>>>& maxMinWords) {
+void linearSearch(Array<pair<string, int>>& positiveAndNegativeWords) {
     string max = "";
     string min = "";
     int maxFreq = INT_MIN;
@@ -230,7 +290,7 @@ void linearSearch(Array<pair<string, int>>& positiveAndNegativeWords, Array<pair
     }
 
     // Insert a pair of minWords and maxWords
-    maxMinWords.insert(make_pair(minWords, maxWords));
+    //maxMinWords.insert(make_pair(minWords, maxWords));
 
     //cout << "Max words: ";
     //for (size_t i = 0; i < maxWords.getSize(); i++) {
@@ -254,65 +314,65 @@ void linearSearch(Array<pair<string, int>>& positiveAndNegativeWords, Array<pair
 
 }
 
-int binarySearch(Array<pair<string, int>>& positiveAndNegativeWords, int low, int high, int targetFreq) {
-    while (low <= high) {
-        int mid = (low + high) / 2;
-        int wordFreq = positiveAndNegativeWords.get(mid).second;
-        if (wordFreq == targetFreq) {
-            return mid;
-        }
-        else if (wordFreq < targetFreq) {
-            low = mid + 1;
-        }
-        else {
-            high = mid - 1;
-        }
-    }
-    return -1;
-}
-
-// Binary search for max and min word 
-void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<pair<Array<string>, Array<string>>>& maxMinWords) {
-    int lowInd = 0;
-    int highInd = positiveAndNegativeWords.getSize() - 1;
-    int maxFreq = INT_MIN;
-    int minFreq = INT_MAX;
-    Array<string> maxWords;
-    Array<string> minWords;
-
-    //get maxFreq
-    for (int i = 0; i < positiveAndNegativeWords.getSize(); i++) {
-        int currentFreq = positiveAndNegativeWords.get(i).second;
-        if (currentFreq > maxFreq) {
-            maxFreq = currentFreq;
-        }
-        if (currentFreq < minFreq) {
-            minFreq = currentFreq;
-        }
-    }
-
-    //search for max freq
-    int maxIndex = binarySearch(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1, maxFreq);
-    if (maxIndex != -1) {
-        for (int i = maxIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == maxFreq; i++) {
-            maxWords.insert(positiveAndNegativeWords.get(i).first); // Insert max words
-        }
-    }
-
-    // Search for min freq
-    int minIndex = binarySearch(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1, minFreq);
-    if (minIndex != -1) {
-        for (int i = minIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i--) {
-            minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
-        }
-        // If there are multiple min frequency words, also check the right side
-        for (int i = minIndex + 1; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i++) {
-            minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
-        }
-    }
-    // Store results in maxMinWords
-    maxMinWords.insert(make_pair(maxWords, minWords));
-}
+//int binarySearch(Array<pair<string, int>>& positiveAndNegativeWords, int low, int high, int targetFreq) {
+//    while (low <= high) {
+//        int mid = (low + high) / 2;
+//        int wordFreq = positiveAndNegativeWords.get(mid).second;
+//        if (wordFreq == targetFreq) {
+//            return mid;
+//        }
+//        else if (wordFreq < targetFreq) {
+//            low = mid + 1;
+//        }
+//        else {
+//            high = mid - 1;
+//        }
+//    }
+//    return -1;
+//}
+//
+//// Binary search for max and min word 
+//void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<pair<Array<string>, Array<string>>>& maxMinWords) {
+//    int lowInd = 0;
+//    int highInd = positiveAndNegativeWords.getSize() - 1;
+//    int maxFreq = INT_MIN;
+//    int minFreq = INT_MAX;
+//    Array<string> maxWords;
+//    Array<string> minWords;
+//
+//    //get maxFreq
+//    for (int i = 0; i < positiveAndNegativeWords.getSize(); i++) {
+//        int currentFreq = positiveAndNegativeWords.get(i).second;
+//        if (currentFreq > maxFreq) {
+//            maxFreq = currentFreq;
+//        }
+//        if (currentFreq < minFreq) {
+//            minFreq = currentFreq;
+//        }
+//    }
+//
+//    //search for max freq
+//    int maxIndex = binarySearch(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1, maxFreq);
+//    if (maxIndex != -1) {
+//        for (int i = maxIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == maxFreq; i++) {
+//            maxWords.insert(positiveAndNegativeWords.get(i).first); // Insert max words
+//        }
+//    }
+//
+//    // Search for min freq
+//    int minIndex = binarySearch(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1, minFreq);
+//    if (minIndex != -1) {
+//        for (int i = minIndex; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i--) {
+//            minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
+//        }
+//        // If there are multiple min frequency words, also check the right side
+//        for (int i = minIndex + 1; i < positiveAndNegativeWords.getSize() && positiveAndNegativeWords.get(i).second == minFreq; i++) {
+//            minWords.insert(positiveAndNegativeWords.get(i).first); // Insert min words
+//        }
+//    }
+//    // Store results in maxMinWords
+//    maxMinWords.insert(make_pair(maxWords, minWords));
+//}
 
 // Helper function to merge two subarrays
 void merge(Array<pair<string, int>>& arr, int left, int mid, int right) {
@@ -438,7 +498,7 @@ int main()
 {
     Array<string> positiveWords, negativeWords;
     Array<pair<string, int>> hotelReviews;
-    Array<pair<Array<string>, Array<string>>> maxMinWords;
+    //Array<pair<Array<string>, Array<string>>> maxMinWords;
     readWordsFromFile("positive-words.txt", positiveWords);
     cout << positiveWords.getSize() << endl;
     cout << positiveWords.getCapacity() << endl;

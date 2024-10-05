@@ -25,7 +25,7 @@ public:
 	void clear();
 
 	//Check if the array is empty
-	bool isEmpty();
+	//bool isEmpty();
 
 	//Delete an element at a given index
 	T remove(int index);

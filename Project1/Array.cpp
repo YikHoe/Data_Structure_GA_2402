@@ -30,10 +30,10 @@ void Array<T>::clear() {
 	size = 0;
 }
 
-template <class T>
-bool Array<T>::isEmpty() {
-	return size == 0;
-}
+//template <class T>
+//bool Array<T>::isEmpty() {
+//	return size == 0;
+//}
 
 template <class T>
 T Array<T>::remove(int index)
