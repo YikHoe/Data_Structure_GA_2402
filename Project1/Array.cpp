@@ -60,7 +60,7 @@ void Array<T>::update(int index, T value)
 }
 
 template <class T>
-T Array<T>::get(int index)
+T& Array<T>::get(int index)
 {
 	if (index >= 0 && index < size)
 	{

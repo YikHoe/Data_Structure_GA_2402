@@ -28,7 +28,7 @@ public:
 	void update(int index, T value);
 
 	//Get element in the array by index
-	T get(int index);
+	T& get(int index);
 
 	//Get the current number of elements in the array
 	size_t getSize();

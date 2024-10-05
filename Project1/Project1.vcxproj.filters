@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="ArrayMainProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileHandler.h">

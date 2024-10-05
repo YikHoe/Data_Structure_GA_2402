@@ -132,7 +132,7 @@
     <ClCompile Include="FileHandler.h" />
     <ClCompile Include="LinearSearch.cpp" />
     <ClCompile Include="LinkedList.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ArrayMainProgram.cpp" />
     <ClCompile Include="QuickSort.cpp" />
     <ClCompile Include="WordLinkedList.cpp" />
     <ClCompile Include="WordLinkedList.h" />
