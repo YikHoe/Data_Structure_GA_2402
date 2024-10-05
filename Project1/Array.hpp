@@ -18,6 +18,9 @@ public:
 	//Constructor
 	Array();
 
+	//Constructor with size, defaul value
+	Array(int initialSize, T defaultValue);
+
 	//Insert element to the end method
 	void insert(T value);
 

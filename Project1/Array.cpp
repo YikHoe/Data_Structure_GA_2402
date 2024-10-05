@@ -12,6 +12,18 @@ Array<T>::Array()
 }
 
 template <class T>
+Array<T>::Array(int initialSize, T defaultValue) {
+    size = initialSize;
+    arrayCapacity = initialSize > 10 ? initialSize : 10; // Ensure at least a capacity of 10
+    data = new T[arrayCapacity];
+
+    // Initialize all elements with the default value
+    for (int i = 0; i < initialSize; i++) {
+        data[i] = defaultValue;
+    }
+}
+
+template <class T>
 void Array<T>::insert(T value)
 {
 	//Resize array if the array capacity is not enough
