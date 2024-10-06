@@ -3,11 +3,11 @@
 #include "FileHandler.h"
 
 
-LinkedList FileHandler::readReviewsFromCSV(const string& filename) {
+void FileHandler::readReviewsFromCSV(const string filename, LinkedList& list) {
     ifstream file(filename);
     if (!file.is_open()) {
         cout << "Error opening CSV file: " << filename << endl;
-        return reviewList;
+        return;
     }
 
     string line;
@@ -19,40 +19,30 @@ LinkedList FileHandler::readReviewsFromCSV(const string& filename) {
 
     int reviewCount = 0; int maxReviews = 5;
     while (getline(file, line) && reviewCount < maxReviews) {
-        sanitize(line);
+        size_t commaPos = line.rfind(',');
+        if (commaPos != string::npos) {
+            string reviewText = line.substr(0, commaPos);
+            string rating = line.substr(commaPos + 1);
+            list.insertFront(reviewText, rating);
+        }
         reviewCount++;
     }
 
     file.close();
-    return reviewList;
 }
 
-WordLinkedList FileHandler::readWordFromText(const string& filename) {
+void FileHandler::readWordFromText(const string filename, LinkedList& wordlist) {
     ifstream file(filename);
     if (!file.is_open()) {
         cout << "Error opening CSV file: " << filename << endl;
-        return wordList;
+        return;
     }
 
     string line;
 
-
     while (getline(file, line)) {
-        wordList.insertFront(line);
+        wordlist.insertFront(line);
     }
 
     file.close();
-    return wordList;
 }
-
-
-void FileHandler::sanitize(string& line) {
-    size_t commaPos = line.rfind(',');
-    if (commaPos != string::npos) {
-        string reviewText = line.substr(0, commaPos);
-        string rating = line.substr(commaPos + 1);
-        reviewList.insertFront(reviewText, rating,"");
-    }
-
-}
-

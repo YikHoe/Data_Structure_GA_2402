@@ -27,12 +27,6 @@
     <ClCompile Include="FileHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WordLinkedList.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WordLinkedList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h">

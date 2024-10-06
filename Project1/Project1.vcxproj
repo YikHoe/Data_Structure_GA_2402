@@ -131,8 +131,6 @@
     <ClCompile Include="FileHandler.h" />
     <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="WordLinkedList.cpp" />
-    <ClCompile Include="WordLinkedList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h" />
