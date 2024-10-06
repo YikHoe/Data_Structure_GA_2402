@@ -1,6 +1,11 @@
+//References
+//Cápona, J. (2017, February 14). A dynamic array implementation in C++ - Jorge Cápona - Medium. Medium. 
+//		https://medium.com/@jcapona/dynamic-array-implementation-cpp-9deadaf1ba8e
+
 #include "Array.hpp"
 using namespace std;
 
+//NOTE: All template class methods implementation below is adapted from Cápona (2017)
 template <class T>
 Array<T>::Array()
 {
@@ -13,14 +18,14 @@ Array<T>::Array()
 
 template <class T>
 Array<T>::Array(int initialSize, T defaultValue) {
-    size = initialSize;
-    arrayCapacity = initialSize > 10 ? initialSize : 10; // Ensure at least a capacity of 10
-    data = new T[arrayCapacity];
+	size = initialSize;
+	arrayCapacity = initialSize > 10 ? initialSize : 10; // Ensure at least a capacity of 10
+	data = new T[arrayCapacity];
 
-    // Initialize all elements with the default value
-    for (int i = 0; i < initialSize; i++) {
-        data[i] = defaultValue;
-    }
+	// Initialize all elements with the default value
+	for (int i = 0; i < initialSize; i++) {
+		data[i] = defaultValue;
+	}
 }
 
 template <class T>
@@ -42,13 +47,8 @@ void Array<T>::clear() {
 	size = 0;
 }
 
-//template <class T>
-//bool Array<T>::isEmpty() {
-//	return size == 0;
-//}
-
 template <class T>
-T Array<T>::remove(int index)
+void Array<T>::remove(int index)
 {
 	if (index >= 0 && index < size)
 	{
@@ -98,13 +98,13 @@ T& Array<T>::get(int index)
 }
 
 template <class T>
-size_t Array<T>::getSize()
+int Array<T>::getSize()
 {
 	return size;
 }
 
 template <class T>
-size_t Array<T>::getCapacity()
+int Array<T>::getCapacity()
 {
 	return arrayCapacity;
 }
@@ -134,6 +134,7 @@ Array<T>::~Array()
 	delete[] data;
 }
 
+//Explicit template instantiations for different data types
 template class Array<string>;
 template class Array<int>;
 template class Array<float>;

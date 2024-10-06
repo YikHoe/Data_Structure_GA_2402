@@ -1,9 +1,16 @@
+//References
+//Cápona, J. (2017, February 14). A dynamic array implementation in C++ - Jorge Cápona - Medium. Medium. 
+//		https://medium.com/@jcapona/dynamic-array-implementation-cpp-9deadaf1ba8e
+
+#pragma once
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 
 #include <stdexcept>
 #include <string>  // Include string support
 using namespace std;
+
+//NOTE: Below template class is adapted from Cápona (2017)
 template<class T>
 class Array
 {
@@ -27,11 +34,8 @@ public:
 	//Clear the element in the array
 	void clear();
 
-	//Check if the array is empty
-	//bool isEmpty();
-
 	//Delete an element at a given index
-	T remove(int index);
+	void remove(int index);
 
 	//Update an element at a given index
 	void update(int index, T value);
@@ -40,10 +44,10 @@ public:
 	T& get(int index);
 
 	//Get the current number of elements in the array
-	size_t getSize();
+	int getSize();
 
 	//Get the current size of the array
-	size_t getCapacity();
+	int getCapacity();
 
 	//Destructor
 	~Array();
