@@ -1,4 +1,10 @@
-// Project1.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//References
+//Krahets. (n.d.-a). 11.5 Quick sort - Hello Algo. Hello Algo. 
+//      https://www.hello-algo.com/en/chapter_sorting/quick_sort/
+
+//Krahets. (n.d.-b). 11.6 Merge sort - Hello Algo. Hello Algo. 
+//      https://www.hello-algo.com/en/chapter_sorting/merge_sort/
+
 
 #include <iostream>
 #include "Array.hpp"
@@ -8,6 +14,7 @@
 #include <sstream>
 #include <chrono>
 
+using namespace std;
 using namespace std::chrono;
 // Read words from a file and store them in array
 void readWordsFromFile(const string& filename, Array<string>& stringArray) {
@@ -147,9 +154,8 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
 
     auto countWordStop = high_resolution_clock::now();
     auto countWordDuration = duration_cast<nanoseconds>(countWordStop - countWordStart);
-    cout << "Count Word Execution time:" << countWordDuration.count() << "nano seconds" << endl;
+    cout << "Count Word Execution time: " << countWordDuration.count() << " nano seconds" << endl;
 }
-
 
 // Calculate the normalized sentiment score
 float calculateSentimentScore(int positiveCount, int negativeCount) {
@@ -347,7 +353,7 @@ void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<string
     //stop timing
     auto linearStop = high_resolution_clock::now(); 
     auto linearDuration = duration_cast<nanoseconds>(linearStop - linearStart);
-    cout << "Search Execution time:" << linearDuration.count() << "nano seconds" << endl;
+    cout << "Search Execution time: " << linearDuration.count() << " nano seconds" << endl;
 }
 
 void displayMinMaxWord(Array<string>& minWords, Array<string>& maxWords) {
@@ -364,7 +370,7 @@ void displayMinMaxWord(Array<string>& minWords, Array<string>& maxWords) {
     cout << endl;
 }
 
-// Helper function to merge two subarrays
+// Helper function to merge two subarrays, adapted from Krahets (n.d.-b)
 void merge(Array<pair<string, int>>& arr, int left, int mid, int right) {
     int n1 = mid - left + 1;
     int n2 = right - mid;
@@ -411,7 +417,7 @@ void merge(Array<pair<string, int>>& arr, int left, int mid, int right) {
     }
 }
 
-// Merge sort function
+// Merge sort function, adapted from Krahets (n.d.-b)
 void mergeSort(Array<pair<string, int>>& arr, int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
@@ -430,7 +436,7 @@ void swap(pair<string, int>& a, pair<string, int>& b) {
     b = temp;
 }
 
-// Partition function
+// Partition function, adapted from Krahets (n.d.-a)
 int partition(Array<pair<string, int>>& arr, int low, int high) {
     pair<string, int> pivot = arr.get(high); // Choose the last element as pivot
     int i = (low - 1); // Index of smaller element
@@ -445,7 +451,7 @@ int partition(Array<pair<string, int>>& arr, int low, int high) {
     return (i + 1);
 }
 
-// Tail Recursive QuickSort
+// Tail Recursive QuickSort, adapted from Krahets (n.d.-a)
 void quickSortTailRecursive(Array<pair<string, int>>& arr, int low, int high) {
     while (low < high) {
         int pi = partition(arr, low, high); // Partitioning index
@@ -465,9 +471,9 @@ void quickSortTailRecursive(Array<pair<string, int>>& arr, int low, int high) {
 }
 
 void displayFrequencies(int totalReviews, int totalPositiveWords, int totalNegativeWords) {
-    cout << "Total Reviews = " << totalReviews << std::endl;
-    cout << "Total Counts of Positive Words = " << totalPositiveWords << std::endl;
-    cout << "Total Counts of Negative Words = " << totalNegativeWords << std::endl;
+    cout << "Total Reviews = " << totalReviews << endl;
+    cout << "Total Counts of Positive Words = " << totalPositiveWords << endl;
+    cout << "Total Counts of Negative Words = " << totalNegativeWords << endl;
 }
 
 void displaySortedFrequencies(Array<pair<string, int>>& positiveAndNegativeWords) {
@@ -490,13 +496,10 @@ int main()
     Array<pair<string, int>> hotelReviews;
     Array<string> minWords, maxWords;
     readWordsFromFile("positive-words.txt", positiveWords);
-    cout << positiveWords.getSize() << endl;
-    cout << positiveWords.getCapacity() << endl;
     readWordsFromFile("negative-words.txt", negativeWords);
-    cout << negativeWords.getSize() << endl;
-    cout << negativeWords.getCapacity() << endl;
+    //NOTE: You can adjust the number of reviews to be read in the readReviewsFromCSV function at the while loop line
+    //It was set to 300 by default
     readReviewsFromCSV("tripadvisor_hotel_reviews.csv", hotelReviews);
-    cout << hotelReviews.getSize() << endl;
 
     int totalPositiveWords = 0;  // Initialize variables to store totals
     int totalNegativeWords = 0;
@@ -507,11 +510,20 @@ int main()
     Array<pair<string, int>> positiveAndNegativeWords;
     concatenateArrays(positiveWords, negativeWords, positiveAndNegativeWords);
     countWordFrequency(hotelReviews, positiveAndNegativeWords);
-    // Choose sorting algorithm
-    mergeSort(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1);
-    //quickSortTailRecursive(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1);
+
+    
+    auto startSort = high_resolution_clock::now(); //start the timer
+
+    //Choose sorting algorithm by comment/uncomment the line below that has the merge/quick sort function
+    //mergeSort(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1);
+    quickSortTailRecursive(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1);
+
+    auto stopSort = high_resolution_clock::now(); //stop the timer
 
     displaySortedFrequencies(positiveAndNegativeWords);
+    //calculate the time used
+	auto duration = duration_cast<microseconds>(stopSort-startSort);
+	cout << "Time execution for sorting: " << duration.count() << " microseconds. " << endl;
     //linearSearch(positiveAndNegativeWords, maxMinWords);
     searchAlgo(positiveAndNegativeWords, minWords, maxWords);
     displayMinMaxWord(minWords, maxWords);
