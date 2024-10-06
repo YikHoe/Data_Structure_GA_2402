@@ -56,7 +56,6 @@ public:
 	int getSize();
 	Node* getHead();
 	WordNode* getWordHead();
-	void setWordHead(WordNode* node);
 
 };
 #endif

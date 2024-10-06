@@ -17,7 +17,7 @@ void FileHandler::readReviewsFromCSV(const string filename, LinkedList& list) {
 
     }
 
-    int reviewCount = 0; int maxReviews = 5;
+    int reviewCount = 0; int maxReviews = 10;
     while (getline(file, line) && reviewCount < maxReviews) {
         size_t commaPos = line.rfind(',');
         if (commaPos != string::npos) {
