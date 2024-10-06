@@ -54,40 +54,39 @@ void readReviewsFromCSV(const string& filename, Array<pair<string, int>>& hotelR
     }
 }
 
-// Count positive and negative words in a review
-//linear search to search positive word
+
+//linear search to count word
 void linearSearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, bool& isPositive) {
+    //Loop the whole words array
     for (int i = 0; i < words.getSize(); i++) {
+        // If the word is matching the correct word
         if (word == words.get(i)) {
+            //Add the word count and insert the word into foundWords array
             wordCount++;
             foundWords.insert(word);
+            // Set positive status to true to avoid repeat searching
             isPositive = true;
             break;
         }
     }
 }
 
-//linear search to search negative word
-//void linearSearchForNegativeWords(Array<string>& negativeWords, string& word, int& negativeCount, Array<string>& foundNegativeWords) {
-//    for (int i = 0; i < negativeWords.getSize(); i++) {
-//        if (word == negativeWords.get(i)) {
-//            negativeCount++;
-//            foundNegativeWords.insert(word);
-//            break;
-//        }
-//    }
-//}
-
-//binary search to search positive word
+//binary search to count word
 void binarySearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, bool& isPositive) {
+    // Set the low Index, high Index
     int low = 0;
     int high = words.getSize() - 1;
     while (low <= high) {
+        // Calculate the middle index
         int mid = (low + high) / 2;
         string midWord = words.get(mid);
+
+        // If the middle word is the correct word
         if (midWord == word) {
+            //Add the word count and insert the word into foundWords array
             wordCount++;
             foundWords.insert(word);
+            // Set positive status to true to avoid repeat searching
             isPositive = true;
             break;
         }
@@ -100,51 +99,38 @@ void binarySearchForWords(Array<string>& words, string& word, int& wordCount, Ar
     }
 }
 
-//binary search to search negative word
-//void binarySearchForNegativeWords(Array<string>& negativeWords, string& word, int& negativeCount, Array<string>& foundNegativeWords) {
-//    int low = 0;
-//    int high = negativeWords.getSize() - 1;
-//    while (low <= high) {
-//        int mid = (low + high) / 2;
-//        string midWord = negativeWords.get(mid);
-//        if (midWord == word) {
-//            negativeCount++;
-//            foundNegativeWords.insert(word);
-//            break;
-//        }
-//        else if (midWord > word) {
-//            high = mid - 1;
-//        }
-//        else {
-//            low = mid + 1;
-//        }
-//    }
-//}
-
+// Count the positive and negative word for each review
 void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords, int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords) {
+    //Reset the positive and negative word count for each review
     positiveCount = 0;
     negativeCount = 0;
 
     // Split review into words
     stringstream ss(review);
     string word;
+
+    // Start Timing
     auto countWordStart = high_resolution_clock::now();
+
     while (ss >> word) {
         bool isPositive = false;
-        // Check if word is in positive or negative words list
+        // Use search algo to check if word is in positive or negative words list
         // Call linear search function
         linearSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
+
         // Call binary search function
         //binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
-        // Run only if the word is not found in positive, Reduce redundancy
+        // Run only if the word is not found in positive, Reduce code redundancy
         if (!isPositive) {
             //Call linear search function
             linearSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive);
+
             // Call binary search function
             //binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive);
         }
     }
 
+    // Stop Timing
     auto countWordStop = high_resolution_clock::now();
     auto countWordDuration = duration_cast<nanoseconds>(countWordStop - countWordStart);
     cout << "Count Word Execution time:" << countWordDuration.count() << "nano seconds" << endl;
@@ -299,7 +285,7 @@ void binarySearch(Array<pair<string, int>>& positiveAndNegativeWords, int low, i
     }
 }
 
-// Binary search for max and min word 
+// Search Algorythm for Maximum and Minimum word 
 void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<string>& minWords, Array<string>& maxWords) {
     int lowInd = 0;
     int highInd = positiveAndNegativeWords.getSize() - 1;
@@ -319,19 +305,12 @@ void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<string
             }
         }
     }
-
-    // Store the leftmost and rightmost
-    int maxResult[2] = { INT_MAX, INT_MIN };
-    int minResult[2] = { INT_MAX, INT_MIN }; // {leftmost, rightmost}
         
-    // start timing
-    auto linearStart = high_resolution_clock::now(); 
+    //Start timing
+    auto searchStart = high_resolution_clock::now(); 
 
     //Binary Search for Max Words
     //binarySearch(positiveAndNegativeWords, lowInd, highInd, maxFreq, visited, maxWords);
-
-    //Linear Search for Max Words
-    linearSearch(positiveAndNegativeWords, maxFreq, maxWords);
 
     //reset visited array ind for Binary search
     for (int i = 0; i < visited.getSize(); i++) {
@@ -341,13 +320,18 @@ void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<string
     //Binary Search for Min Words
     //binarySearch(positiveAndNegativeWords, 0, highInd, minFreq, visited, minWords);
 
+    //Linear Search for Max Words
+    linearSearch(positiveAndNegativeWords, maxFreq, maxWords);
+
     //Linear Search for Min Words
     linearSearch(positiveAndNegativeWords, minFreq, minWords);
 
-    //stop timing
-    auto linearStop = high_resolution_clock::now(); 
-    auto linearDuration = duration_cast<nanoseconds>(linearStop - linearStart);
-    cout << "Search Execution time:" << linearDuration.count() << "nano seconds" << endl;
+    //Stop timing
+    auto searchStop = high_resolution_clock::now(); 
+
+    //Calculate Search Time
+    auto searchDuration = duration_cast<nanoseconds>(searchStop - searchStart);
+    cout << "Search Execution time:" << searchDuration.count() << "nano seconds" << endl;
 }
 
 void displayMinMaxWord(Array<string>& minWords, Array<string>& maxWords) {
