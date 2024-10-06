@@ -6,21 +6,6 @@
 
 using namespace std;
 
-struct File
-{
-	string fileName;
-};
-
-class FileHandler {
-    public:
-
-        LinkedList readReviewsFromCSV(const string& filename);
-        LinkedList readWordFromText(const string& filename);
-
-
-    private:
-        LinkedList reviewList, wordList;
-        void sanitize(string& line);
-
-};
+void readReviewsFromCSV(const string filename, LinkedList& list);
+void readWordFromText(const string filename, LinkedList& wordlist);
 #endif

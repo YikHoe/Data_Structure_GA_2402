@@ -1,7 +1,6 @@
 #pragma once
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
-#include "WordLinkedList.h"
 using namespace std;
 
 struct Node
@@ -14,6 +13,7 @@ struct Node
 struct WordNode
 {
 	string word;
+	int frequency;
 	WordNode* nextAddress;
 	WordNode(string word_string);
 };
@@ -21,8 +21,18 @@ struct WordNode
 class LinkedList
 {
 	private:
-		Node* head;
-		WordNode* word_head;
+		Node* head, * tail;
+		WordNode* word_head, * word_tail;
+		int size;
+
+		// quick sort algorithm
+		WordNode* partition(WordNode* head, WordNode* tail);
+		WordNode* partitionByFrequency(WordNode* head, WordNode* tail);
+		void sortRecur(WordNode* head, WordNode* tail);
+		void sortRecurByFrequency(WordNode* head, WordNode* tail);
+
+		// binary search alogorithm
+		WordNode* getMiddle(WordNode* head, WordNode* tail);
 
 	public:
 		LinkedList();
@@ -34,6 +44,24 @@ class LinkedList
 		void deleteFront();
 		void deleteBack();
 		void displayList();
-		//LinkedList search(const WordLinkedList& positiveList&, const WordLinkedList& negativeList);
+		void printReport();
+
+		// quick sort
+		void quickSort();
+		void quickSortByFrequency();
+
+		// binary search
+		bool binarySearch(string target);
+
+		void checkDuped(string word);
+
+		//void calculateFrequency();
+		//void removeDuplicates();
+
+		Node* getHead();
+		Node* getTail();
+		WordNode* getWordHead();
+		WordNode* getWordTail();
+
 };
 #endif
