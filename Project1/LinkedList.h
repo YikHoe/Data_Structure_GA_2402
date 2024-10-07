@@ -21,9 +21,9 @@ struct WordNode
 class LinkedList
 {
 private:
-	Node* head;
+	Node* head, *tail;
 	int size = 0;
-	WordNode* word_head;
+	WordNode* word_head, *word_tail;
 
 public:
 	LinkedList();
@@ -37,25 +37,19 @@ public:
 	void displayList();
 	//linear serach
 	LinkedList search(LinkedList& wordList, LinkedList& positiveList, LinkedList& negativeList);
-	LinkedList search(LinkedList& wordList);
 	//merge sort
-	WordNode* mergeLists(WordNode* left, WordNode* right, LinkedList& positiveList, LinkedList& negativeList);
 	WordNode* mergeLists(WordNode* left, WordNode* right);
 	WordNode* splitList(WordNode* head);
-	WordNode* mergeSort(WordNode* head, LinkedList& positiveList, LinkedList& negativeList);
 	WordNode* mergeSort(WordNode* head);
 	//helper
-	bool contains(const string& word) const;
-	bool isPositive(const string& word, LinkedList& positiveList);
-	bool isNegative(const string& word, LinkedList& positiveList);
-	void tokenize(string review);
+	bool linearSearch(string word);
 	void countFrequency();
 	void removeDuplicates();
-	void sortByPosNeg(LinkedList& positiveList, LinkedList& negativeList);
 	void sortByFrequency();
 	int getSize();
 	Node* getHead();
 	WordNode* getWordHead();
+	void checkDuped(string word);
 
 };
 #endif

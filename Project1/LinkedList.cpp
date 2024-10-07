@@ -5,7 +5,7 @@
 Node::Node(string review_string, string rating_given) : review(review_string), rating(rating_given), nextAddress(nullptr) {}
 WordNode::WordNode(string word_string) : word(word_string), frequency(0), nextAddress(nullptr) {}
 
-LinkedList::LinkedList() : head(nullptr), word_head(nullptr) {}
+LinkedList::LinkedList() : head(nullptr),tail(nullptr), word_head(nullptr), word_tail(nullptr) {}
 
 Node* LinkedList::getHead() {
 	return head;
@@ -22,7 +22,7 @@ LinkedList LinkedList::search(LinkedList& wordList, LinkedList& positiveList, Li
 
 	while (currentWordNode != nullptr) {  // Traverse the wordList
 		// Check if the word exists in positiveList or negativeList
-		if (positiveList.contains(currentWordNode->word) || negativeList.contains(currentWordNode->word)) {
+		if (positiveList.linearSearch(currentWordNode->word) || negativeList.linearSearch(currentWordNode->word)) {
 			// If the word is found in either list, insert it into the foundedList
 			foundedList.insertFront(currentWordNode->word);
 		}
@@ -32,34 +32,8 @@ LinkedList LinkedList::search(LinkedList& wordList, LinkedList& positiveList, Li
 	return foundedList;  // Return the list containing matching words
 }
 
-LinkedList LinkedList::search(LinkedList& wordList) {
-	LinkedList maxList;  // List to store all nodes with the max value
 
-	WordNode* current = wordList.getWordHead();  // Start from the head of the list
-	string maxValue = current->word;  // Initialize the max value to the first node's word
-
-	// First, find the maximum value
-	while (current != nullptr) {
-		if (current->word > maxValue) {
-			maxValue = current->word;  // Update the max value if the current word is greater
-		}
-		current = current->nextAddress;  // Move to the next node
-	}
-
-	// Second, collect all nodes with the max value
-	current = wordList.getWordHead();  // Start again from the head of the list
-	while (current != nullptr) {
-		if (current->word == maxValue) {
-			maxList.insertFront(current->word);  // Insert the word with max value to the maxList
-		}
-		current = current->nextAddress;  // Move to the next node
-	}
-
-	return maxList;  // Return the list containing all nodes with the max value
-}
-
-
-bool LinkedList::contains(const string& word) const {
+bool LinkedList::linearSearch(string word){
 	WordNode* current = word_head;  // Start at the head of the list
 	while (current != nullptr) {
 		if (current->word == word) {
@@ -70,52 +44,6 @@ bool LinkedList::contains(const string& word) const {
 	return false;  // Word not found in the list
 }
 
-bool LinkedList::isPositive(const string& word, LinkedList& positiveList) {
-	return positiveList.contains(word);
-}
-
-bool LinkedList::isNegative(const string& word, LinkedList& negativeList) {
-	return negativeList.contains(word);
-}
-
-
-WordNode* LinkedList::mergeLists(WordNode* left, WordNode* right, LinkedList& positiveList, LinkedList& negativeList) {
-	if (left == nullptr) return right;
-	if (right == nullptr) return left;
-
-	WordNode* result = nullptr;
-
-	// Modularized positive/negative check
-	if (isPositive(left->word, positiveList) && !isPositive(right->word, positiveList)) {
-		result = left;
-		result->nextAddress = mergeLists(left->nextAddress, right, positiveList, negativeList);
-	}
-	else if (!isPositive(left->word, positiveList) && isPositive(right->word, positiveList)) {
-		result = right;
-		result->nextAddress = mergeLists(left, right->nextAddress, positiveList, negativeList);
-	}
-	else if (isNegative(left->word, negativeList) && !isNegative(right->word, negativeList)) {
-		result = right;
-		result->nextAddress = mergeLists(left, right->nextAddress, positiveList, negativeList);
-	}
-	else if (!isNegative(left->word, negativeList) && isNegative(right->word, negativeList)) {
-		result = left;
-		result->nextAddress = mergeLists(left->nextAddress, right, positiveList, negativeList);
-	}
-	else {
-		// If both are positive or both are negative, merge by word comparison
-		if (left->word <= right->word) {
-			result = left;
-			result->nextAddress = mergeLists(left->nextAddress, right, positiveList, negativeList);
-		}
-		else {
-			result = right;
-			result->nextAddress = mergeLists(left, right->nextAddress, positiveList, negativeList);
-		}
-	}
-
-	return result;
-}
 
 WordNode* LinkedList::splitList(WordNode* head) {
 	if (head == nullptr || head->nextAddress == nullptr) {
@@ -135,28 +63,65 @@ WordNode* LinkedList::splitList(WordNode* head) {
 	return middle;
 }
 
-WordNode* LinkedList::mergeSort(WordNode* head, LinkedList& positiveList, LinkedList& negativeList) {
+
+WordNode* LinkedList::mergeSort(WordNode* head) {
+	// Base case: If the list is empty or has only one node
 	if (head == nullptr || head->nextAddress == nullptr) {
 		return head;
 	}
 
-	// Split the list into two halves
+	// Split the list into halves
 	WordNode* middle = splitList(head);
+	WordNode* left = mergeSort(head);
+	WordNode* right = mergeSort(middle);
 
-	// Recursively sort the two halves
-	WordNode* left = mergeSort(head, positiveList, negativeList);
-	WordNode* right = mergeSort(middle, positiveList, negativeList);
-
-	// Merge the sorted halves based on positive/negative logic
-	return mergeLists(left, right, positiveList, negativeList);
+	// Merge the sorted halves
+	return mergeLists(left, right);
 }
 
-void LinkedList::sortByPosNeg(LinkedList& positiveList, LinkedList& negativeList) {
-	word_head = mergeSort(word_head, positiveList, negativeList);
+WordNode* LinkedList::mergeLists(WordNode* left, WordNode* right) {
+	// Create a dummy node to simplify merging
+	WordNode dummy("");
+	WordNode* tail = &dummy;
+
+	while (left != nullptr && right != nullptr) {
+		if (left->frequency < right->frequency) {
+			tail->nextAddress = left;
+			left = left->nextAddress;
+		}
+		else if (left->frequency > right->frequency) {
+			tail->nextAddress = right;
+			right = right->nextAddress;
+		}
+		else {
+			// If frequencies are equal, sort lexicographically
+			if (left->word <= right->word) {
+				tail->nextAddress = left;
+				left = left->nextAddress;
+			}
+			else {
+				tail->nextAddress = right;
+				right = right->nextAddress;
+			}
+		}
+		tail = tail->nextAddress; // Move the tail pointer
+	}
+
+	// Append any remaining nodes
+	if (left != nullptr) {
+		tail->nextAddress = left;
+	}
+	else {
+		tail->nextAddress = right;
+	}
+
+	return dummy.nextAddress; // Return the merged list
 }
 
 
-
+void LinkedList::sortByFrequency() {
+	word_head = mergeSort(word_head); // Now sort based on frequency
+}
 
 
 LinkedList::~LinkedList() {
@@ -300,6 +265,7 @@ void LinkedList::displayList() {
 	cout << string(10, '=') << " END OF LIST " << string(10, '=') << endl;
 }
 
+
 int LinkedList::getSize() {
 	WordNode* word_temp = word_head;
 	while (word_temp != nullptr) {
@@ -311,73 +277,6 @@ int LinkedList::getSize() {
 
 }
 
-void LinkedList::countFrequency() {
-	WordNode* current = word_head;
-
-	// Traverse the list and count frequency of each word
-	current = word_head;
-	while (current != nullptr) {
-		WordNode* temp = word_head;
-		while (temp != nullptr) {
-			if (temp->word == current->word) {
-				current->frequency++; // Increment frequency count
-			}
-			temp = temp->nextAddress;
-		}
-		current = current->nextAddress;
-	}
-}
-
-WordNode* LinkedList::mergeLists(WordNode* left, WordNode* right) {
-	if (left == nullptr) return right;
-	if (right == nullptr) return left;
-
-	WordNode* result = nullptr;
-
-	// Sort by frequency in ascending order
-	if (left->frequency < right->frequency) {
-		result = left;
-		result->nextAddress = mergeLists(left->nextAddress, right);
-	}
-	else if (left->frequency > right->frequency) {
-		result = right;
-		result->nextAddress = mergeLists(left, right->nextAddress);
-	}
-	else {
-		// If frequencies are equal, sort lexicographically
-		if (left->word <= right->word) {
-			result = left;
-			result->nextAddress = mergeLists(left->nextAddress, right);
-		}
-		else {
-			result = right;
-			result->nextAddress = mergeLists(left, right->nextAddress);
-		}
-	}
-
-	return result;
-}
-
-WordNode* LinkedList::mergeSort(WordNode* head) {
-	if (head == nullptr || head->nextAddress == nullptr) {
-		return head;
-	}
-
-	// Split the list into two halves
-	WordNode* middle = splitList(head);
-
-	// Recursively sort the two halves
-	WordNode* left = mergeSort(head);
-	WordNode* right = mergeSort(middle);
-
-	// Merge the sorted halves based on frequency
-	return mergeLists(left, right);
-}
-
-void LinkedList::sortByFrequency() {
-	countFrequency(); // Make sure frequencies are updated before sorting
-	word_head = mergeSort(word_head); // Now sort based on frequency
-}
 
 void LinkedList::removeDuplicates() {
 	if (word_head == nullptr || word_head->nextAddress == nullptr) {
@@ -405,30 +304,29 @@ void LinkedList::removeDuplicates() {
 	}
 }
 
+void LinkedList::checkDuped(string word) {
+	WordNode* current = word_head;
 
-void LinkedList::tokenize(string review) {
-	string word = "";
-	for (char c : review) {
-		// Manually check if the character is alphanumeric
-		if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-			// Manually convert to lowercase if it's an uppercase letter
-			if (c >= 'A' && c <= 'Z') {
-				c = c + 32; // Convert to lowercase by adding ASCII offset
-			}
-			word += c;
+	while (current != nullptr) {
+		if (current->word == word) {
+			current->frequency += 1;
+			return;
 		}
-		else {
-			if (!word.empty()) {
-				insertFront(word);
-				word = "";
-			}
-		}
+
+		current = current->nextAddress;
 	}
 
-	if (!word.empty()) {
-		insertFront(word);
+	WordNode* newNode = new WordNode(word);
+	newNode->nextAddress = word_head;
+	newNode->frequency += 1;
+
+	if (word_head == nullptr) {
+		word_tail = newNode;
 	}
+
+	word_head = newNode;
 }
+
 
 
 

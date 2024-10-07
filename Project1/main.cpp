@@ -4,28 +4,28 @@
 #include <iostream>
 #include "LinkedList.h"
 #include "FileHandler.h"
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
+
 
 static void tokenize(string review, LinkedList& list) {
-	string word = "";
+	string word;
 	for (char c : review) {
-		// Manually check if the character is alphanumeric
-		if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-			// Manually convert to lowercase if it's an uppercase letter
-			if (c >= 'A' && c <= 'Z') {
-				c = c + 32; // Convert to lowercase by adding ASCII offset
-			}
-			word += c;
+		// Check if the character is a valid ASCII alphanumeric character
+		if (isascii(c) && isalnum(c)) {
+			word += tolower(c); // Convert to lowercase
 		}
 		else {
+			// If we reach a non-alphanumeric character and have a valid word, insert it
 			if (!word.empty()) {
 				list.insertFront(word);
-				word = "";
+				word.clear(); // Clear the word after inserting
 			}
 		}
 	}
-
+	// Insert the last word if there's one remaining
 	if (!word.empty()) {
 		list.insertFront(word);
 	}
@@ -40,7 +40,7 @@ int calculateSentimentScore(int positiveCount, int negativeCount) {
 	if (maxRawScore == minRawScore) return 3;
 
 	float normalizedScore = float(rawScore - minRawScore) / (maxRawScore - minRawScore);
-	return round(1.0f + (4.0f * normalizedScore));
+	return round(1 + (4 * normalizedScore));
 }
 
 void analyzeScore(int sentimentScore, int ratingGiven) {
@@ -63,51 +63,53 @@ int main()
 	fileHandler.readWordFromText("negative-words.txt", negativeList);
 
 	LinkedList wordList;
-	LinkedList foundPositiveList;
-	LinkedList foundNegativeList;
 	LinkedList accumulatedWordList; // This will accumulate words across all reviews
-	int positiveCount = 0;
-	int negativeCount = 0;
+
 	int totalPositiveCount = 0;
 	int totalNegativeCount = 0;
 	int reviewCount = 1;
+
+	auto startSort = high_resolution_clock::now();
+
 
 	Node* currentReviewNode = reviewsList.getHead();
 
 	// Processing each review and accumulating the total counts
 	while (currentReviewNode != nullptr) {
+		LinkedList foundPositiveList;
+		LinkedList foundNegativeList;
+		int positiveCount = 0;
+		int negativeCount = 0;
+
 		cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl << endl;
 
 		// Tokenize the current review
 		tokenize(currentReviewNode->review, wordList);
 		LinkedList foundList = reviewsList.search(wordList, positiveList, negativeList);
-		foundList.sortByPosNeg(positiveList, negativeList);
 
 		// Accumulate words into a single list
 		WordNode* currentWord = foundList.getWordHead();
-		
+
 		// Classify words into positive and negative lists
 		currentWord = foundList.getWordHead();
 		while (currentWord != nullptr) {
-			if (positiveList.contains(currentWord->word)) {
-				foundPositiveList.insertFront(currentWord->word);
+			if (positiveList.linearSearch(currentWord->word)) {
+				foundPositiveList.checkDuped(currentWord->word);
+				positiveCount++;
 			}
-			else if (negativeList.contains(currentWord->word)) {
-				foundNegativeList.insertFront(currentWord->word);
+			else {
+				foundNegativeList.checkDuped(currentWord->word);
+				negativeCount++;
 			}
-			accumulatedWordList.insertFront(currentWord->word);
+			accumulatedWordList.checkDuped(currentWord->word);
 			currentWord = currentWord->nextAddress;
 		}
 
 		// Display positive and negative words found
-		positiveCount = foundPositiveList.getSize();
 		cout << positiveCount << " Positive words found:" << endl;
-		foundPositiveList.removeDuplicates();
 		foundPositiveList.displayList();
 
-		negativeCount = foundNegativeList.getSize();
 		cout << negativeCount << " Negative words found:" << endl;
-		foundNegativeList.removeDuplicates();
 		foundNegativeList.displayList();
 
 		// Accumulate total positive and negative word counts
@@ -120,9 +122,6 @@ int main()
 		cout << "Rating given by User =  " << currentReviewNode->rating << endl;
 		analyzeScore(sentimentScore, stoi(currentReviewNode->rating));
 
-		// Reset lists for the next review
-		foundPositiveList = LinkedList();
-		foundNegativeList = LinkedList();
 		wordList = LinkedList();
 		reviewCount++;
 		currentReviewNode = currentReviewNode->nextAddress;
@@ -138,8 +137,17 @@ int main()
 
 	// Display the accumulated full word list (sorted by frequency)
 	cout << "Full Word List (from all reviews, sorted by frequency):" << endl;
-	accumulatedWordList.removeDuplicates();
 	accumulatedWordList.displayList();
+
+	auto stopSort = high_resolution_clock::now();
+	// Calculate the duration in microseconds
+	auto duration = duration_cast<microseconds>(stopSort - startSort).count();
+
+	// Convert duration to minutes and seconds
+	long minutes = duration / 1'000'000 / 60; // Convert microseconds to minutes
+	long seconds = (duration / 1'000'000) % 60; // Remaining seconds after minutes
+
+	cout << "Time taken to sort: " << minutes << " minutes and " << seconds << " seconds." << std::endl;
 
 
 }
