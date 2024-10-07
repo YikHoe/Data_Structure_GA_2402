@@ -2,29 +2,31 @@
 //
 
 #include <iostream>
+#include <chrono>
 #include "LinkedList.h"
 #include "FileHandler.h"
 
 
 using namespace std;
+using namespace std::chrono;
 
 void tokenize(string review, LinkedList& list) {
     string word = "";
+
     for (char c : review) {
-        if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-            if (c >= 'A' && c <= 'Z') {
-                c = c + 32; // Convert to lowercase by adding ASCII offset
-            }
-            word += c;
+        // Check if the character is a valid ASCII alphanumeric character
+        if (isascii(c) && isalnum(c)) {
+            word += tolower(c); // Convert to lowercase
         }
         else {
+            // If we reach a non-alphanumeric character and have a valid word, insert it
             if (!word.empty()) {
                 list.insertFront(word);
-                word = "";
+                word.clear(); // Clear the word after inserting
             }
         }
     }
-
+    // Insert the last word if there's one remaining
     if (!word.empty()) {
         list.insertFront(word);
     }
@@ -52,34 +54,13 @@ void analyzeScore(int sentimentScore, int ratingGiven) {
         << endl << endl;
 }
 
-
-//void analyzeReviews(LinkedList& reviews) {
-//
-//}
-
-int main()
-{
-    LinkedList reviewsList, negativeList, positiveList, wordList, accumulatedWordList;
-	readReviewsFromCSV("tripadvisor_hotel_reviews.csv", reviewsList);
-	readWordFromText("negative-words.txt", negativeList);
-	readWordFromText("positive-words.txt", positiveList);
-
-    int totalPositiveCount = 0;
-    int totalNegativeCount = 0;
-    int reviewCount = 1;
-    
-    negativeList.quickSort();
-    positiveList.quickSort();
-    wordList.quickSort();
-
-    Node* currentReviewNode = reviewsList.getHead();
+void linkedListAlgorithm1(Node*& currentReviewNode, int reviewCount, LinkedList& wordList, LinkedList& positiveList, LinkedList& negativeList, int& totalPositiveCount, int& totalNegativeCount, LinkedList& accumulatedWordList) {
     while (currentReviewNode != nullptr) {
         cout << string(50, '=') << endl;
         cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl << endl;
         tokenize(currentReviewNode->review, wordList);
 
         WordNode* tempWord = wordList.getWordHead();
-        LinkedList foundPositiveWords, foundNegativeWords;
 
         int positiveCount = 0;
         int negativeCount = 0;
@@ -89,14 +70,12 @@ int main()
                 positiveCount++;
                 totalPositiveCount++;
                 accumulatedWordList.checkDuped(tempWord->word);
-                foundPositiveWords.checkDuped(tempWord->word);
             }
 
             if (negativeList.binarySearch(tempWord->word)) {
                 negativeCount++;
                 totalNegativeCount++;
                 accumulatedWordList.checkDuped(tempWord->word);
-                foundNegativeWords.checkDuped(tempWord->word);
             }
 
             tempWord = tempWord->nextAddress;
@@ -105,11 +84,11 @@ int main()
         // Display analysis result for current review
         // Positive words found
         cout << positiveCount << " postive words found in the review: " << endl;
-        foundPositiveWords.displayList();
+        positiveList.printReport();
 
         // Negative words found
         cout << negativeCount << " negative words found in the review: " << endl;
-        foundNegativeWords.displayList();
+        negativeList.printReport();
 
         // Calculate sentimental score based on total positive words and negative words found in review
         int sentimentScore = calculateSentimentScore(positiveCount, negativeCount);
@@ -120,15 +99,43 @@ int main()
         analyzeScore(sentimentScore, stoi(currentReviewNode->rating));
         cout << string(50, '=') << endl;
 
+        positiveList.resetFrequencies();
+        negativeList.resetFrequencies();
+        wordList.~LinkedList();
         wordList = LinkedList();
         reviewCount++;
         currentReviewNode = currentReviewNode->nextAddress;
     }
 
+}
+
+int main()
+{
+    LinkedList reviewsList, negativeList, positiveList, wordList, accumulatedWordList;
+	readReviewsFromCSV("tripadvisor_hotel_reviews.csv", reviewsList);
+	readWordFromText("negative-words.txt", negativeList);
+	readWordFromText("positive-words.txt", positiveList);
+
+    positiveList.quickSort();
+    negativeList.quickSort();
+
+    int totalPositiveCount = 0;
+    int totalNegativeCount = 0;
+    int reviewCount = 1;
+
+    Node* currentReviewNode = reviewsList.getHead();
+
+    auto timeStart = high_resolution_clock::now();
+    linkedListAlgorithm1(currentReviewNode, reviewCount, wordList, positiveList, negativeList, totalPositiveCount, totalNegativeCount, accumulatedWordList);
+    auto timeStop = high_resolution_clock::now();
+
+    auto duration = duration_cast<minutes>(timeStop - timeStart);
+
     // Overall review analysis result
     accumulatedWordList.quickSortByFrequency();
 
     // Display overall summary
+    cout << endl << string(100, '=') << endl << endl;
     cout << "Total Reviews Processed = " << reviewCount - 1 << endl;
     cout << "Total Count of Positive Words = " << totalPositiveCount << endl;
     cout << "Total Count of Negative Words = " << totalNegativeCount << endl;
@@ -137,5 +144,7 @@ int main()
     cout << "Full Word List (from all reviews, sorted by frequency):" << endl;
     accumulatedWordList.printReport();
 
+    cout << endl << endl;
+    cout << "Time used for analyzing reviews: " << duration.count() << " minutes" << endl;
 }
 

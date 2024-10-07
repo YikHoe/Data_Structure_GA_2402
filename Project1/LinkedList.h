@@ -52,7 +52,7 @@ class LinkedList
 
 		// binary search
 		bool binarySearch(string target);
-
+		void resetFrequencies();
 		void checkDuped(string word);
 
 		//void calculateFrequency();

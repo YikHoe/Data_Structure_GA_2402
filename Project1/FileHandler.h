@@ -6,6 +6,6 @@
 
 using namespace std;
 
-void readReviewsFromCSV(const string filename, LinkedList& list);
-void readWordFromText(const string filename, LinkedList& wordlist);
+void readReviewsFromCSV(string filename, LinkedList& list);
+void readWordFromText(string filename, LinkedList& wordlist);
 #endif
