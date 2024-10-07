@@ -21,6 +21,15 @@
     <ClCompile Include="FileIO.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+    <ClCompile Include="LinkedList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+>>>>>>> yikhoe
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h">

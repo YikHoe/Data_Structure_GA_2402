@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< HEAD
       <FullPath>C:\Users\yizun\OneDrive\Documents\GitHub\Data_Structure_GA_2402\x64\Debug\Project1.exe</FullPath>
+=======
+      <FullPath>D:\GitHub Desktop\Data_Structure_GA_2402\x64\Debug\Project1.exe</FullPath>
+>>>>>>> yikhoe
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

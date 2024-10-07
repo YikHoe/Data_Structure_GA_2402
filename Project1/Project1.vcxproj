@@ -127,7 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="FileIO.h" />
+=======
+    <ClCompile Include="FileHandler.cpp" />
+    <ClCompile Include="FileHandler.h" />
+    <ClCompile Include="LinkedList.cpp" />
+>>>>>>> yikhoe
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
