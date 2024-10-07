@@ -52,47 +52,30 @@ void analyzeScore(int sentimentScore, int ratingGiven) {
 		<< endl << endl;
 }
 
-
-int main()
-{
-	class FileHandler fileHandler;
-
-	LinkedList reviewsList, positiveList, negativeList;
-	fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv", reviewsList);
-	fileHandler.readWordFromText("positive-words.txt", positiveList);
-	fileHandler.readWordFromText("negative-words.txt", negativeList);
-
-	LinkedList wordList;
-	LinkedList accumulatedWordList; // This will accumulate words across all reviews
-
-	int totalPositiveCount = 0;
-	int totalNegativeCount = 0;
-	int reviewCount = 1;
-
-	auto startSort = high_resolution_clock::now();
+void displaySummary(int reviewCount, int totalPositiveCount, int totalNegativeCount, LinkedList& accumulatedWordList) {
+	cout << "Total Reviews Processed = " << reviewCount << endl;
+	cout << "Total Count of Positive Words = " << totalPositiveCount << endl;
+	cout << "Total Count of Negative Words = " << totalNegativeCount << endl;
+	cout << "Full Word List (from all reviews, sorted by frequency):" << endl;
+	accumulatedWordList.displayList();
+}
 
 
-	Node* currentReviewNode = reviewsList.getHead();
+void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList) {
+	LinkedList wordList, accumulatedWordList;
+	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
 
-	// Processing each review and accumulating the total counts
-	while (currentReviewNode != nullptr) {
-		LinkedList foundPositiveList;
-		LinkedList foundNegativeList;
-		int positiveCount = 0;
-		int negativeCount = 0;
+	for (Node* currentReviewNode = reviewsList.getHead(); currentReviewNode != nullptr; currentReviewNode = currentReviewNode->nextAddress) {
+		LinkedList foundPositiveList, foundNegativeList;
+		int positiveCount = 0, negativeCount = 0;
+		reviewCount++;
 
 		cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl << endl;
 
-		// Tokenize the current review
 		tokenize(currentReviewNode->review, wordList);
 		LinkedList foundList = reviewsList.search(wordList, positiveList, negativeList);
 
-		// Accumulate words into a single list
-		WordNode* currentWord = foundList.getWordHead();
-
-		// Classify words into positive and negative lists
-		currentWord = foundList.getWordHead();
-		while (currentWord != nullptr) {
+		for (WordNode* currentWord = foundList.getWordHead(); currentWord != nullptr; currentWord = currentWord->nextAddress) {
 			if (positiveList.linearSearch(currentWord->word)) {
 				foundPositiveList.checkDuped(currentWord->word);
 				positiveCount++;
@@ -102,54 +85,51 @@ int main()
 				negativeCount++;
 			}
 			accumulatedWordList.checkDuped(currentWord->word);
-			currentWord = currentWord->nextAddress;
 		}
 
-		// Display positive and negative words found
 		cout << positiveCount << " Positive words found:" << endl;
 		foundPositiveList.displayList();
 
 		cout << negativeCount << " Negative words found:" << endl;
 		foundNegativeList.displayList();
 
-		// Accumulate total positive and negative word counts
 		totalPositiveCount += positiveCount;
 		totalNegativeCount += negativeCount;
 
-		// Calculate and display sentiment score
 		int sentimentScore = calculateSentimentScore(positiveCount, negativeCount);
 		cout << "Sentiment Score (1-5) = " << sentimentScore << endl;
 		cout << "Rating given by User =  " << currentReviewNode->rating << endl;
 		analyzeScore(sentimentScore, stoi(currentReviewNode->rating));
 
 		wordList = LinkedList();
-		reviewCount++;
-		currentReviewNode = currentReviewNode->nextAddress;
 	}
 
-	// Sort the accumulated word list by frequency
 	accumulatedWordList.sortByFrequency();
-
-	// Display overall summary
-	cout << "Total Reviews Processed = " << reviewCount - 1 << endl;
-	cout << "Total Count of Positive Words = " << totalPositiveCount << endl;
-	cout << "Total Count of Negative Words = " << totalNegativeCount << endl;
-
-	// Display the accumulated full word list (sorted by frequency)
-	cout << "Full Word List (from all reviews, sorted by frequency):" << endl;
-	accumulatedWordList.displayList();
-
-	auto stopSort = high_resolution_clock::now();
-	// Calculate the duration in microseconds
-	auto duration = duration_cast<microseconds>(stopSort - startSort).count();
-
-	// Convert duration to minutes and seconds
-	long minutes = duration / 1'000'000 / 60; // Convert microseconds to minutes
-	long seconds = (duration / 1'000'000) % 60; // Remaining seconds after minutes
-
-	cout << "Time taken to sort: " << minutes << " minutes and " << seconds << " seconds." << std::endl;
-
-
+	displaySummary(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
 }
+
+
+
+int main() {
+	FileHandler fileHandler;
+	LinkedList reviewsList, positiveList, negativeList;
+
+	fileHandler.readReviewsFromCSV("tripadvisor_hotel_reviews.csv", reviewsList);
+	fileHandler.readWordFromText("positive-words.txt", positiveList);
+	fileHandler.readWordFromText("negative-words.txt", negativeList);
+
+	auto startTime = high_resolution_clock::now();
+
+	processReviews(reviewsList, positiveList, negativeList);
+
+	auto endTime = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(endTime - startTime);
+
+	cout << "Time taken: " << duration.count() / 1'000'000 / 60 << " minutes and "
+		<< (duration.count() / 1'000'000) % 60 << " seconds." << endl;
+
+	return 0;
+}
+
 
 

@@ -107,15 +107,9 @@ WordNode* LinkedList::mergeLists(WordNode* left, WordNode* right) {
 		tail = tail->nextAddress; // Move the tail pointer
 	}
 
-	// Append any remaining nodes
-	if (left != nullptr) {
-		tail->nextAddress = left;
-	}
-	else {
-		tail->nextAddress = right;
-	}
+	tail->nextAddress = left ? left : right;
+	return dummy.nextAddress;
 
-	return dummy.nextAddress; // Return the merged list
 }
 
 
