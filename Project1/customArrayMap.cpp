@@ -42,6 +42,23 @@ void customArrayMap<K, V>::update(K key, V value)
     throw out_of_range("Key not found.");
 }
 
+// Update value and key by index
+template<class K, class V>
+void customArrayMap<K, V>::updateByIndex(int index, K key, V value)
+{
+    if (index >= 0 && index < mapData.getSize())
+    {
+        auto& entry = mapData.get(index);  // Get a reference to the entry
+        entry.key = key;                   // Update the key
+        entry.value = value;               // Update the value
+    }
+    else 
+    {
+        //Throw an exception if index is out of bound
+        throw out_of_range("Index is out of range");
+    }
+}
+
 // Add frequency to 1 by key 
 template<class K, class V>
 void customArrayMap<K, V>::addFreqByKey(K key)

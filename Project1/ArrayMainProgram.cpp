@@ -16,12 +16,33 @@
 #include "customArrayMap.hpp"
 #include <string>
 #include <fstream>
-#include <utility>
-#include <sstream>
 #include <chrono>
 
 using namespace std;
 using namespace std::chrono;
+
+// Tokenize and seperate the word
+void tokenize(string review, Array<string>& list) {
+    string word = "";
+
+    for (char c : review) {
+        // Check if the character is a valid ASCII alphanumeric character
+        if (isascii(c) && isalnum(c)) {
+            word += tolower(c); // Convert to lowercase
+        }
+        else {
+            // If we reach a non-alphanumeric character and have a valid word, insert it
+            if (!word.empty()) {
+                list.insert(word);
+                word.clear(); // Clear the word after inserting
+            }
+        }
+    }
+    // Insert the last word if there's one remaining
+    if (!word.empty()) {
+        list.insert(word);
+    }
+}
 
 // Read words from a file and store them in array
 void readWordsFromFile(const string& filename, Array<string>& stringArray) {
@@ -54,7 +75,6 @@ void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hot
     int rowCount = 0;
     //Modify here to set how many rows to read
     while (getline(file, line) && rowCount < 300) {
-        stringstream ss(line);
         string review;
         int rating;
 
@@ -129,40 +149,37 @@ void binarySearchForWords(Array<string>& words, string& word, int& wordCount, Ar
 // Count the positive and negative word for each review
 void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords,
     int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords, int& i, customArrayMap<string, int>& wordFreq) {
-    //Reset the positive and negative word count for each review
+
+    // Reset the positive and negative word count for each review
     positiveCount = 0;
     negativeCount = 0;
 
     // Split review into words
-    stringstream ss(review);
-    string word;
+    Array<string> splitWord;
+    tokenize(review, splitWord); // Assuming 'tokenize' splits the review into words and stores them in splitWord
 
     // Start Timing
     auto countWordStart = high_resolution_clock::now();
 
-    while (ss >> word) {
+    // Iterate through the splitWord array
+    for (int j = 0; j < splitWord.getSize(); j++) {
+        string word = splitWord.get(j); // Get the word at index j
+
         bool isPositive = false;
-        // Use search algo to check if word is in positive or negative words list
-        // Call linear search function
-        //linearSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
 
-         //Call binary search function
-        binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        // Use search algorithm to check if word is in positive or negative words list
+        linearSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
 
-        // Run only if the word is not found in positive, Reduce code redundancy
+        // Run only if the word is not found in positive
         if (!isPositive) {
-            //Call linear search function
-            //linearSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive);
-
-            // Call binary search function
-            binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            linearSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
         }
     }
 
     // Stop Timing
     auto countWordStop = high_resolution_clock::now();
     auto countWordDuration = duration_cast<milliseconds>(countWordStop - countWordStart);
-    cout << "Count Word Execution time for Review " << i+1 << ": " << countWordDuration.count() << " milli seconds" << endl;
+    cout << "Count Word Execution time for Review " << i + 1 << ": " << countWordDuration.count() << " milliseconds" << endl;
 }
 
 // Calculate the normalized sentiment score
@@ -360,46 +377,49 @@ void merge(customArrayMap<string, int>& arr, int left, int mid, int right) {
     int n1 = mid - left + 1;
     int n2 = right - mid;
 
-    //Create temporary left and right array
+    // Create temporary maps for the left and right parts
     customArrayMap<string, int> Left, Right;
 
-    // Copy elements from main array to left and right temporary map
+    // Copy data to temporary maps Left[] and Right[]
     for (int i = 0; i < n1; i++) {
-        auto kv = arr.getByIndex(left + i);  // Use getByIndex to get key-value pair
-        Left.insert(kv.key, kv.value);       // Insert into Left map
+        auto kv = arr.getByIndex(left + i);  // Extract key-value pair from the main array
+        Left.insert(kv.key, kv.value);  // Insert into Left map
     }
     for (int j = 0; j < n2; j++) {
-        auto kv = arr.getByIndex(mid + 1 + j);  // Use getByIndex for Right as well
-        Right.insert(kv.key, kv.value);         // Insert into Right map
+        auto kv = arr.getByIndex(mid + 1 + j);  // Extract key-value pair for Right
+        Right.insert(kv.key, kv.value);  // Insert into Right map
     }
 
-    // Merge the temporary arrays back into arr
-    int i = 0, j = 0, k = left;
+    // Initial indexes of first and second subarrays
+    int i = 0, j = 0;
+    int k = left;  // Initial index of merged subarray
+
+    // Merge the temp maps back into arr
     while (i < n1 && j < n2) {
-        // Compare frequencies (values) of the current elements in Left and Right
+        // Compare the values and merge the smaller one into arr
         if (Left.getByIndex(i).value <= Right.getByIndex(j).value) {
-            // If Left's element is smaller, update arr with Left's element
-            arr.update(arr.getByIndex(k).key, Left.getByIndex(i).value);
+            // Update the original array with Left's key-value pair if its value is smaller
+            arr.updateByIndex(k, Left.getByIndex(i).key, Left.getByIndex(i).value);
             i++;
         }
         else {
-            // Otherwise, update arr with Right's element
-            arr.update(arr.getByIndex(k).key, Right.getByIndex(j).value);
+            // Update the original array with Right's key-value pair
+            arr.updateByIndex(k, Right.getByIndex(j).key, Right.getByIndex(j).value);
             j++;
         }
         k++;
     }
 
-    // Copy any remaining elements from Left
+    // Copy the remaining elements of Left[], if any
     while (i < n1) {
-        arr.update(arr.getByIndex(k).key, Left.getByIndex(i).value);
+        arr.updateByIndex(k, Left.getByIndex(i).key, Left.getByIndex(i).value);
         i++;
         k++;
     }
 
-    // Copy any remaining elements from Right
+    // Copy the remaining elements of Right[], if any
     while (j < n2) {
-        arr.update(arr.getByIndex(k).key, Right.getByIndex(j).value);
+        arr.updateByIndex(k, Right.getByIndex(j).key, Right.getByIndex(j).value);
         j++;
         k++;
     }
@@ -410,9 +430,11 @@ void mergeSort(customArrayMap<string, int>& arr, int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
 
+        // Recursively sort first and second halves
         mergeSort(arr, left, mid);
         mergeSort(arr, mid + 1, right);
 
+        // Merge the sorted halves
         merge(arr, left, mid, right);
     }
 }
@@ -494,12 +516,13 @@ void displaySummary(Array<int>& reviewRate, float& matchEvaluation, float& unmat
 }
 
 int main()
-{   
+{
     Array<int> reviewRate(3, 0);
     Array<string> positiveWords, negativeWords;
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
+    auto startProgram = high_resolution_clock::now(); //start the timer
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
     //NOTE: You can adjust the number of reviews to be read in the readReviewsFromCSV function at the while loop line
@@ -512,24 +535,26 @@ int main()
     int totalNegativeWords = 0;
 
     summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
-                        matchEvaluation, unmatchEvaluation, wordFrequency);
+        matchEvaluation, unmatchEvaluation, wordFrequency);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
-  
+
     auto startSort = high_resolution_clock::now(); //start the timer
 
     //Choose sorting algorithm by comment/uncomment the line below that has the merge/quick sort function
-    mergeSort(wordFrequency, 0, wordFrequency.getSize() - 1);
-    //quickSortTailRecursive(wordFrequency, 0, wordFrequency.getSize() - 1);
+    //mergeSort(wordFrequency, 0, wordFrequency.getSize() - 1);
+    quickSortTailRecursive(wordFrequency, 0, wordFrequency.getSize() - 1);
 
     auto stopSort = high_resolution_clock::now(); //stop the timer
 
     displaySortedFrequencies(wordFrequency);
     //calculate the time used
-	auto duration = duration_cast<microseconds>(stopSort-startSort);
-	cout << "Time execution for sorting: " << duration.count() << " microseconds. " << endl;
+    auto duration = duration_cast<microseconds>(stopSort - startSort);
+    cout << "Time execution for sorting: " << duration.count() << " microseconds. " << endl;
     searchAlgo(wordFrequency, minWords, maxWords);
     displayMinMaxWord(minWords, maxWords);
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
-
+    auto stopProgram = high_resolution_clock::now();
+    auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
+    cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
     return 0;
 }
