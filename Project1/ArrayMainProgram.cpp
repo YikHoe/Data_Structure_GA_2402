@@ -5,6 +5,11 @@
 //Krahets. (n.d.-b). 11.6 Merge sort - Hello Algo. Hello Algo. 
 //      https://www.hello-algo.com/en/chapter_sorting/merge_sort/
 
+//AHIRLABS. (n.d.).Recursive Binary Search in Cpp Programming – AHIRLABS.
+//      https://www.ahirlabs.com/programing/cpp-programming/recursive-binary-search/ 
+
+// BEKOAIL, P. F. (2019, November 13). Binary search a left/right most element when there are duplicates. Stack Overflow. 
+//      https://stackoverflow.com/a/58838379
 
 #include <iostream>
 #include "Array.hpp"
@@ -107,7 +112,8 @@ void binarySearchForWords(Array<string>& words, string& word, int& wordCount, Ar
 }
 
 // Count the positive and negative word for each review
-void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords, int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords) {
+void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords, 
+    int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords, int& i) {
     //Reset the positive and negative word count for each review
     positiveCount = 0;
     negativeCount = 0;
@@ -123,24 +129,24 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
         bool isPositive = false;
         // Use search algo to check if word is in positive or negative words list
         // Call linear search function
-        linearSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
+        //linearSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
 
-        // Call binary search function
-        //binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
+         //Call binary search function
+        binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive);
         // Run only if the word is not found in positive, Reduce code redundancy
         if (!isPositive) {
             //Call linear search function
-            linearSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive);
+            //linearSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive);
 
             // Call binary search function
-            //binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive);
+            binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive);
         }
     }
 
     // Stop Timing
     auto countWordStop = high_resolution_clock::now();
-    auto countWordDuration = duration_cast<nanoseconds>(countWordStop - countWordStart);
-    cout << "Count Word Execution time: " << countWordDuration.count() << " nano seconds" << endl;
+    auto countWordDuration = duration_cast<milliseconds>(countWordStop - countWordStart);
+    cout << "Count Word Execution time for Review " << i+1 << ": " << countWordDuration.count() << " milli seconds" << endl;
 }
 
 // Calculate the normalized sentiment score
@@ -158,12 +164,8 @@ float calculateSentimentScore(int positiveCount, int negativeCount) {
 
 // Display sentiment summary
 void summarizeSentiment(Array<pair<string, int>>& hotelReviews, Array<string>& positiveWords, Array<string>& negativeWords,
-    int& totalPositiveWords, int& totalNegativeWords)
+    int& totalPositiveWords, int& totalNegativeWords, Array<int>& reviewRate, float& matchEvaluation, float& unmatchEvaluation)
 {
-    int totalPositiveReviews = 0;
-    int totalNegativeReviews = 0;
-    int totalNeutralReviews = 0;
-
     for (int i = 0; i < hotelReviews.getSize(); i++) {
         string review = hotelReviews.get(i).first;
         int rating = hotelReviews.get(i).second;
@@ -171,7 +173,7 @@ void summarizeSentiment(Array<pair<string, int>>& hotelReviews, Array<string>& p
         Array<string> foundPositiveWords;
         Array<string> foundNegativeWords;
         int positiveCount = 0, negativeCount = 0;
-        countPositiveNegativeWords(review, positiveWords, negativeWords, positiveCount, negativeCount, foundPositiveWords, foundNegativeWords);
+        countPositiveNegativeWords(review, positiveWords, negativeWords, positiveCount, negativeCount, foundPositiveWords, foundNegativeWords, i);
         
         //Update total counts
         totalPositiveWords += positiveCount;
@@ -194,16 +196,40 @@ void summarizeSentiment(Array<pair<string, int>>& hotelReviews, Array<string>& p
         cout << endl;
         float sentimentScore = calculateSentimentScore(positiveCount, negativeCount);
         int roundScore = round(sentimentScore);
+        //calculate positive, negative and neutral review
+        switch (roundScore) {
+            case 1:
+            case 2:  // When the round score is 1-2
+                reviewRate.get(2)++;
+                break;  // Break ensures the next case doesn't execute
+
+            case 3:
+                reviewRate.get(1)++;
+                break;
+
+            case 4:
+            case 5:  // When the round score is 4-5
+                reviewRate.get(0)++;
+                break;
+
+            default:
+                // Handle unexpected values of roundScore
+                break;
+        }
+
+
         // display sentiment score
         cout << "Sentiment score (1-5) \t= " << sentimentScore << ", thus the rating should be equal to " << roundScore << endl;
         // display user rating
         cout << "User Ratings \t\t= " << rating << endl;
         // evaluate the accuracy 
         if (abs(roundScore - rating) < 1.0) {
+            matchEvaluation++;
             cout << "Analysis output: User's subjective evaluation matches the sentiment score provided by the analysis." << endl;
             cout << "There is a consistency between the sentiment score generated by the analysis and the user's evaluation of the sentiment." << endl;
         }
         else {
+            unmatchEvaluation++;
             cout << "Analysis output: User's subjective evaluation does not match the sentiment score provided by the analysis." << endl;
             cout << "There is an inconsistency between the sentiment score generated by the analysis and the user's evaluation of the sentiment." << endl;
         }
@@ -263,7 +289,8 @@ void linearSearch(Array<pair<string, int>>& positiveAndNegativeWords, int& targe
     }
 }
 
-
+//Recursive Binary Searching, adapt from (Recursive Binary Search in Cpp Programming – AHIRLABS, n.d.)
+//Mark visited array index to avoid repeating, adapted from (Binary Search a Left/Right Most Element When There Are Duplicates, n.d.)
 void binarySearch(Array<pair<string, int>>& positiveAndNegativeWords, int low, int high, int targetFreq, Array<bool>& visited, Array<string>& words) {
     if (low <= high) {
         int mid = (low + high) / 2;
@@ -316,7 +343,7 @@ void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<string
     auto searchStart = high_resolution_clock::now(); 
 
     //Binary Search for Max Words
-    //binarySearch(positiveAndNegativeWords, lowInd, highInd, maxFreq, visited, maxWords);
+    binarySearch(positiveAndNegativeWords, lowInd, highInd, maxFreq, visited, maxWords);
 
     //reset visited array ind for Binary search
     for (int i = 0; i < visited.getSize(); i++) {
@@ -324,20 +351,20 @@ void searchAlgo(Array<pair<string, int>>& positiveAndNegativeWords, Array<string
     }
 
     //Binary Search for Min Words
-    //binarySearch(positiveAndNegativeWords, 0, highInd, minFreq, visited, minWords);
+    binarySearch(positiveAndNegativeWords, 0, highInd, minFreq, visited, minWords);
 
     //Linear Search for Max Words
-    linearSearch(positiveAndNegativeWords, maxFreq, maxWords);
+    //linearSearch(positiveAndNegativeWords, maxFreq, maxWords);
 
     //Linear Search for Min Words
-    linearSearch(positiveAndNegativeWords, minFreq, minWords);
+    //linearSearch(positiveAndNegativeWords, minFreq, minWords);
 
     //Stop timing
     auto searchStop = high_resolution_clock::now(); 
 
     //Calculate Search Time
-    auto searchDuration = duration_cast<nanoseconds>(searchStop - searchStart);
-    cout << "Search Execution time:" << searchDuration.count() << "nano seconds" << endl;
+    auto searchDuration = duration_cast<microseconds>(searchStop - searchStart);
+    cout << "Search Execution time:" << searchDuration.count() << "micro seconds" << endl;
 }
 
 void displayMinMaxWord(Array<string>& minWords, Array<string>& maxWords) {
@@ -474,8 +501,23 @@ void displaySortedFrequencies(Array<pair<string, int>>& positiveAndNegativeWords
     }
 }
 
+void displaySummary(Array<int>& reviewRate, float& matchEvaluation, float& unmatchEvaluation) {
+    int positiveReview = reviewRate.get(0);
+    int neutralReview = reviewRate.get(1);
+    int negativeReview = reviewRate.get(2);
+    float evaluationAccuracy = (matchEvaluation / (matchEvaluation + unmatchEvaluation)) * 100;
+    cout << "----------------------------Final Summary--------------------------------" << endl;
+    cout << "Total Positive Review \t: " << positiveReview << endl;
+    cout << "Total Neutral Review \t: " << neutralReview << endl;
+    cout << "Total Negative Review \t: " << negativeReview << endl;
+    cout << "Total Matching Review \t: " << matchEvaluation << endl;
+    cout << "Total Unmatch Review \t: " << unmatchEvaluation << endl;
+    cout << "Overall Evaluation Accuracy \t: " << evaluationAccuracy << "%" << endl;
+}
+
 int main()
-{
+{   
+    Array<int> reviewRate(3, 0);
     Array<string> positiveWords, negativeWords;
     Array<pair<string, int>> hotelReviews;
     Array<string> minWords, maxWords;
@@ -485,10 +527,13 @@ int main()
     //It was set to 300 by default
     readReviewsFromCSV("tripadvisor_hotel_reviews.csv", hotelReviews);
 
+    float matchEvaluation = 0;
+    float unmatchEvaluation = 0;
     int totalPositiveWords = 0;  // Initialize variables to store totals
     int totalNegativeWords = 0;
 
-    summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords);
+    summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
+        matchEvaluation, unmatchEvaluation);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
     
     Array<pair<string, int>> positiveAndNegativeWords;
@@ -511,5 +556,6 @@ int main()
     //linearSearch(positiveAndNegativeWords, maxMinWords);
     searchAlgo(positiveAndNegativeWords, minWords, maxWords);
     displayMinMaxWord(minWords, maxWords);
+    displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
     return 0;
 }
