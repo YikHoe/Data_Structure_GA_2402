@@ -9,12 +9,165 @@ WordNode::WordNode(string word_string) : word(word_string), frequency(0), nextAd
 
 LinkedList::LinkedList() : head(nullptr),tail(nullptr), word_head(nullptr), word_tail(nullptr) {}
 
-Node* LinkedList::getHead() {
-	return head;
+LinkedList::~LinkedList() {
+    Node* current = head;
+    while (current != nullptr) {
+        Node* temp = current;
+        current = current->nextAddress;
+        delete temp;
+    }
+
+    WordNode* currentWord = word_head;
+    while (currentWord != nullptr) {
+        WordNode* temp = currentWord;
+        currentWord = currentWord->nextAddress;
+        delete temp;
+    }
+
+
+    head = tail = nullptr;
+    word_head = word_tail = nullptr;
 }
 
-WordNode* LinkedList::getWordHead() {
-	return word_head;
+
+void LinkedList::insertFront(string review, string rating) {
+    Node* newNode = new Node(review, rating);
+    newNode->nextAddress = head;
+
+    if (head == nullptr) {
+        tail = newNode;
+    }
+
+    head = newNode;
+}
+
+void LinkedList::insertFront(string word) {
+    WordNode* newNode = new WordNode(word);
+    newNode->nextAddress = word_head;
+
+    if (word_head == nullptr) {
+        word_tail = newNode;
+    }
+
+    word_head = newNode;
+}
+
+void LinkedList::insertBack(string review, string rating) {
+    Node* newNode = new Node(review, rating);
+    Node* current = head;
+
+    while (current->nextAddress != nullptr) {
+        current = current->nextAddress;
+    }
+
+    current->nextAddress = newNode;
+}
+
+void LinkedList::insertBack(string word) {
+    WordNode* newNode = new WordNode(word);
+    if (word_tail == nullptr) { // List is empty
+        word_head = word_tail = newNode;
+    }
+    else {
+        word_tail->nextAddress = newNode;
+        word_tail = newNode;
+    }
+}
+
+void LinkedList::deleteFront() {
+    if (head == nullptr && word_head == nullptr) {
+        return;
+    }
+
+    if (head != nullptr) {
+        Node* current = head;
+        head = head->nextAddress;
+        delete current;
+    }
+    else {
+        WordNode* current = word_head;
+        word_head = word_head->nextAddress;
+        delete current;
+    }
+
+
+}
+
+void  LinkedList::deleteBack() {
+    if (head == nullptr) {
+        return;
+    }
+
+    if (head != nullptr) {
+        Node* current = head;
+        Node* prev = nullptr;
+
+        while (current->nextAddress != nullptr) {
+            prev = current;
+            current = current->nextAddress;
+        }
+
+        if (prev == nullptr) {
+            head = nullptr;
+        }
+        else {
+            prev->nextAddress = nullptr;
+        }
+
+        delete current;
+    }
+    else {
+        WordNode* current = word_head;
+        WordNode* prev = nullptr;
+
+        while (current->nextAddress != nullptr) {
+            prev = current;
+            current = current->nextAddress;
+        }
+
+        if (prev == nullptr) {
+            word_head = nullptr;
+        }
+        else {
+            prev->nextAddress = nullptr;
+        }
+
+        delete current;
+    }
+
+
+}
+
+void LinkedList::displayList() {
+    Node* temp = head;
+    WordNode* word_temp = word_head;
+
+    while (temp != nullptr) {
+        cout << "Review: " << temp->review << endl;
+        cout << "Rating: " << temp->rating << endl << endl;
+        temp = temp->nextAddress;
+    }
+
+    while (word_temp != nullptr) {
+        cout << word_temp->word << endl;
+        word_temp = word_temp->nextAddress;
+    }
+
+    cout << endl << endl << endl;
+}
+
+void LinkedList::printReport() {
+    WordNode* word_temp = word_head;
+
+    while (word_temp != nullptr) {
+        if (word_temp->frequency != 0) {
+            cout << word_temp->word << " = " << word_temp->frequency << endl;
+        }
+
+        word_temp = word_temp->nextAddress;
+    }
+
+    cout << endl << endl << endl;
 }
 
 LinkedList LinkedList::findMatchingWords(LinkedList& positiveList, LinkedList& negativeList) {
@@ -172,169 +325,6 @@ void LinkedList::sortByFrequency() {
 		word_tail = temp; // Update the tail
 	}
 }
-
-LinkedList::LinkedList() : head(nullptr), tail(nullptr), word_head(nullptr), word_tail(nullptr), size(0) {}
-
-LinkedList::~LinkedList() {
-	Node* current = head;
-	while (current != nullptr) {
-		Node* temp = current;
-		current = current->nextAddress;
-		delete temp;
-	}
-
-	WordNode* currentWord = word_head;
-	while (currentWord != nullptr) {
-		WordNode* temp = currentWord;
-		currentWord = currentWord->nextAddress;
-		delete temp;
-	}
-
-
-    head = tail = nullptr;
-    word_head = word_tail = nullptr;
-}
-
-void LinkedList::insertFront(string review, string rating) {
-	Node* newNode = new Node(review, rating);
-	newNode->nextAddress = head;
-
-    if (head == nullptr) {
-        tail = newNode;
-    }
-
-	head = newNode;
-}
-
-void LinkedList::insertFront(string word) {
-    WordNode* newNode = new WordNode(word);
-    newNode->nextAddress = word_head;
-
-    if (word_head == nullptr) {
-        word_tail = newNode;
-    }
-
-    word_head = newNode;
-}
-
-void LinkedList::insertBack(string review, string rating) {
-	Node* newNode = new Node(review, rating);
-	Node* current = head;
-
-	while (current->nextAddress != nullptr) {
-		current = current->nextAddress;
-	}
-
-	current->nextAddress = newNode;
-}
-
-void LinkedList::insertBack(string word) {
-    WordNode* newNode = new WordNode(word);
-    if (word_tail == nullptr) { // List is empty
-        word_head = word_tail = newNode;
-    }
-    else {
-        word_tail->nextAddress = newNode;
-        word_tail = newNode;
-    }
-}
-
-void LinkedList::deleteFront() {
-    if (head == nullptr && word_head == nullptr) {
-        return;
-    }
-
-    if (head != nullptr) {
-        Node* current = head;
-        head = head->nextAddress;
-        delete current;
-    }
-    else {
-        WordNode* current = word_head;
-        word_head = word_head->nextAddress;
-        delete current;
-    }
-	
-
-}
-
-void  LinkedList::deleteBack() {
-	if (head == nullptr) {
-		return;
-	}
-
-    if (head != nullptr) {
-        Node* current = head;
-        Node* prev = nullptr;
-
-        while (current->nextAddress != nullptr) {
-            prev = current;
-            current = current->nextAddress;
-        }
-
-        if (prev == nullptr) {
-            head = nullptr;
-        }
-        else {
-            prev->nextAddress = nullptr;
-        }
-
-        delete current;
-    }
-    else {
-        WordNode* current = word_head;
-        WordNode* prev = nullptr;
-
-        while (current->nextAddress != nullptr) {
-            prev = current;
-            current = current->nextAddress;
-        }
-
-        if (prev == nullptr) {
-            word_head = nullptr;
-        }
-        else {
-            prev->nextAddress = nullptr;
-        }
-
-        delete current;
-    }
-
-	
-}
-
-void LinkedList::displayList() {
-    Node* temp = head;
-    WordNode* word_temp = word_head;
-
-    while (temp != nullptr) {
-        cout << "Review: " << temp->review << endl;
-        cout << "Rating: " << temp->rating << endl << endl;
-        temp = temp->nextAddress;
-    }
-
-    while (word_temp != nullptr) {
-        cout << word_temp->word << endl;
-        word_temp = word_temp->nextAddress;
-    }
-
-    cout << endl << endl << endl;
-}
-
-void LinkedList::printReport() {
-    WordNode* word_temp = word_head;
-
-    while (word_temp != nullptr) {
-        if (word_temp->frequency != 0) {
-            cout << word_temp->word << " = " << word_temp->frequency << endl;
-        }
-
-        word_temp = word_temp->nextAddress;
-    }
-
-    cout << endl << endl << endl;
-}
-
 // Quick sort
 WordNode* LinkedList::partition(WordNode* head, WordNode* tail) {
     // Select the first node as the pivot node

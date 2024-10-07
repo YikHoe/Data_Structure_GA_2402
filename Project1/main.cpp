@@ -115,7 +115,7 @@ void displayFinalSummary(const Summary& summary) {
     if (summary.totalReviews > 0) {
 		double totalMatched = summary.totalMatching * 1.0;
 		double allReviews = summary.totalReviews * 1.0;
-        double overallAccuracy = (summary.totalMatching / summary.totalReviews) * 100.0;
+        double overallAccuracy = (totalMatched / allReviews) * 100.0;
         cout << fixed << setprecision(2); // Set precision for percentage display
         cout << "Overall Evaluation Accuracy  : " << overallAccuracy << "%" << std::endl;
     }
@@ -124,6 +124,7 @@ void displayFinalSummary(const Summary& summary) {
     }
 }
 
+// WONG YI ZUN (merge sort + linear search)
 void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
 	LinkedList wordList, accumulatedWordList;
 	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
@@ -177,7 +178,6 @@ void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, Link
 		wordList = LinkedList();
 	}
 	summary.totalReviews = reviewCount;
-	accumulatedWordList.sortByFrequency();
 
 	// Timer for sort algorithm
 	auto sortStartTime = high_resolution_clock::now();
@@ -195,9 +195,11 @@ void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, Link
 	displayFinalSummary(summary);
 }
 
+// AU YIK HOE (quick sort + binary search)
 void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
     LinkedList accumulatedWordList;
     int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
+    auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
 
     for (Node* currentReviewNode = reviews.getHead(); currentReviewNode != nullptr; currentReviewNode = currentReviewNode->nextAddress) {
         LinkedList wordList;
@@ -208,6 +210,8 @@ void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedLi
 
         int positiveCount = 0;
         int negativeCount = 0;
+
+        auto searchStartTime = high_resolution_clock::now();
 
         for (WordNode* tempWord = wordList.getWordHead(); tempWord != nullptr; tempWord = tempWord->nextAddress) {
             if (positiveList.binarySearch(tempWord->word)) {
@@ -222,6 +226,11 @@ void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedLi
                 accumulatedWordList.checkDuped(tempWord->word);
             }
         }
+
+        auto searchEndTime = high_resolution_clock::now();
+        auto searchDuration = duration_cast<microseconds>(searchEndTime - searchStartTime);
+        cout << "Time taken for search: " << searchDuration.count() / 1'000'000.0 << " seconds." << endl;
+        totalSearchTime += searchDuration;
 
         // Display analysis result for current review
         // Positive words found
@@ -247,8 +256,22 @@ void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedLi
     }
 
     summary.totalReviews = reviewCount;
-    accumulatedWordList.quickSortByFrequency();
+
+    // Timer for sort algorithm
+    auto sortStartTime = high_resolution_clock::now();
+
+    accumulatedWordList.sortByFrequency(); // Assuming this is where sorting happens
+
+    auto sortEndTime = high_resolution_clock::now();
+    auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
+
     displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
+    
+    cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
+    cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
+    accumulatedWordList.max();
+    accumulatedWordList.min();
+
     displayFinalSummary(summary);
 }
 
@@ -262,8 +285,8 @@ int main() {
 
 	auto startTime = high_resolution_clock::now();
 
-	// processReviewsAlgo1(reviewsList, positiveList, negativeList, summary); // Linked List algorithm 1 (merge + linear)
-	// processReviewsAlgo2(reviewsList, positiveList, negativeList, summary); // Linled List algorithm 2 (quick + binary)
+	//processReviewsAlgo1(reviewsList, positiveList, negativeList, summary); // Linked List algorithm 1 (merge + linear)
+	//processReviewsAlgo2(reviewsList, positiveList, negativeList, summary); // Linled List algorithm 2 (quick + binary)
 
 	auto endTime = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(endTime - startTime);

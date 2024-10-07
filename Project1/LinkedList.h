@@ -24,7 +24,6 @@ class LinkedList
 		Node* head, * tail;
 		int size = 0;
 		WordNode* word_head, * word_tail;
-		int size;
 
 		// quick sort algorithm
 		WordNode* partition(WordNode* head, WordNode* tail);
@@ -44,7 +43,6 @@ class LinkedList
 		void insertBack(string word);
 		void deleteFront();
 		void deleteBack();
-		int getSize();
 		void displayList();
 		void printReport();
 
