@@ -22,6 +22,7 @@ class LinkedList
 {
 	private:
 		Node* head, * tail;
+		int size = 0;
 		WordNode* word_head, * word_tail;
 		int size;
 
@@ -43,8 +44,23 @@ class LinkedList
 		void insertBack(string word);
 		void deleteFront();
 		void deleteBack();
+		int getSize();
 		void displayList();
 		void printReport();
+
+		//linear serach
+		LinkedList findMatchingWords(LinkedList& positiveList, LinkedList& negativeList);
+		void max();
+		void min();
+
+		//merge sort
+		WordNode* mergeLists(WordNode* left, WordNode* right);
+		WordNode* splitList(WordNode* head);
+		WordNode* mergeSort(WordNode* head);
+		
+		//helper
+		bool linearSearch(string word);
+		void sortByFrequency();
 
 		// quick sort
 		void quickSort();
@@ -55,13 +71,10 @@ class LinkedList
 		void resetFrequencies();
 		void checkDuped(string word);
 
-		//void calculateFrequency();
-		//void removeDuplicates();
 
 		Node* getHead();
 		Node* getTail();
 		WordNode* getWordHead();
 		WordNode* getWordTail();
-
 };
 #endif
