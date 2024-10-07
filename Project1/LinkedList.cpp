@@ -1,5 +1,4 @@
 ﻿#include <iostream>
-#include <sstream>
 #include <chrono>
 #include "LinkedList.h"
 
@@ -184,14 +183,18 @@ WordNode* LinkedList::partition(WordNode* head, WordNode* tail) {
 
         if (current->word < pivot->word) {
             previous = previous->nextAddress;
-            swap(current->word, previous->word);
+            string temp = current->word;
+            current->word = previous->word;
+            previous->word = temp;
         }
 
         // Move current to the next node
         current = current->nextAddress;
     }
 
-    swap(pivot->word, previous->word);
+    string temp = pivot->word;
+    pivot->word = previous->word;
+    previous->word = temp;
 
     return previous; // new pivot
 }
@@ -202,20 +205,33 @@ WordNode* LinkedList::partitionByFrequency(WordNode* head, WordNode* tail) {
     }
 
     int pivot_freq = head->frequency;
+    string pivot_word = head->word;
     WordNode* pre = head;
     WordNode* current = head->nextAddress;
 
     while (current != tail->nextAddress) {
-        if (current->frequency <= pivot_freq) {
+        if (current->frequency < pivot_freq || (current->frequency == pivot_freq && current->word < pivot_word)) {
             pre = pre->nextAddress;
-            swap(pre->word, current->word);
-            swap(pre->frequency, current->frequency);
+
+            string word_temp = pre->word;
+            int freq_temp = pre->frequency;
+
+            pre->word = current->word;
+            pre->frequency = current->frequency;
+            current->word = word_temp;
+            current->frequency = freq_temp;
         }
         current = current->nextAddress;
     }
     
-    swap(pre->word, current->word);
-    swap(head->frequency, pre->frequency);
+    string word_temp = head->word;
+    int freq_temp = head->frequency;
+
+    head->word = pre->word;
+    head->frequency = pre->frequency;
+    pre->word = word_temp;
+    pre->frequency = freq_temp;
+
     return pre; // new pivot
 }
 
