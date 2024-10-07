@@ -36,15 +36,15 @@ public:
 	void deleteBack();
 	void displayList();
 	//linear serach
-	LinkedList search(LinkedList& wordList, LinkedList& positiveList, LinkedList& negativeList);
+	LinkedList findMatchingWords(LinkedList& positiveList, LinkedList& negativeList);
+	void max();
+	void min();
 	//merge sort
 	WordNode* mergeLists(WordNode* left, WordNode* right);
 	WordNode* splitList(WordNode* head);
 	WordNode* mergeSort(WordNode* head);
 	//helper
 	bool linearSearch(string word);
-	void countFrequency();
-	void removeDuplicates();
 	void sortByFrequency();
 	int getSize();
 	Node* getHead();

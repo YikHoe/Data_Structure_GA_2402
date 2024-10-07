@@ -17,15 +17,15 @@ void FileHandler::readReviewsFromCSV(const string filename, LinkedList& list) {
 
     }
 
-    int reviewCount = 0; int maxReviews = 100;
-    while (getline(file, line) && reviewCount < maxReviews) {
+    //int reviewCount = 0; int maxReviews = 10;
+    while (getline(file, line)/* && reviewCount < maxReview*/) {
         size_t commaPos = line.rfind(',');
         if (commaPos != string::npos) {
             string reviewText = line.substr(0, commaPos);
             string rating = line.substr(commaPos + 1);
             list.insertFront(reviewText, rating);
         }
-        reviewCount++;
+        //reviewCount++;
     }
 
     file.close();
