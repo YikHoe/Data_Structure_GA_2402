@@ -3,6 +3,7 @@
 //		https://medium.com/@jcapona/dynamic-array-implementation-cpp-9deadaf1ba8e
 
 #include "Array.hpp"
+#include "customArrayMap.hpp"
 using namespace std;
 
 //NOTE: All template class methods implementation below is adapted from Cápona (2017)
@@ -154,3 +155,4 @@ template class Array<char16_t>;
 template class Array<char32_t>;
 template class Array<bool>;
 template class Array<pair<string, int>>;
+template class Array<KeyValuePair<string, int>>;

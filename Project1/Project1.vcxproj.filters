@@ -42,6 +42,9 @@
     <ClCompile Include="Array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="customArrayMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Array.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="customArrayMap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

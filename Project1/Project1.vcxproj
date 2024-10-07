@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Array.cpp" />
+    <ClCompile Include="customArrayMap.cpp" />
     <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="FileHandler.h" />
     <ClCompile Include="LinearSearch.cpp" />
@@ -139,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array.hpp" />
+    <ClInclude Include="customArrayMap.hpp" />
     <ClInclude Include="LinearSearch.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="QuickSort.h" />

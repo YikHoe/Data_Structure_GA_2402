@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include "Array.hpp"
+#include "customArrayMap.hpp"
 #include <string>
 #include <fstream>
 #include <utility>
@@ -21,6 +22,7 @@
 
 using namespace std;
 using namespace std::chrono;
+
 // Read words from a file and store them in array
 void readWordsFromFile(const string& filename, Array<string>& stringArray) {
     ifstream file(filename);
@@ -37,7 +39,7 @@ void readWordsFromFile(const string& filename, Array<string>& stringArray) {
 }
 
 // Read reviews from a CSV file
-void readReviewsFromCSV(const string& filename, Array<pair<string, int>>& hotelReview) {
+void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hotelReview) {
     ifstream file(filename);
     if (!file) {
         cerr << "Error opening CSV file: " << filename << endl;
@@ -60,7 +62,7 @@ void readReviewsFromCSV(const string& filename, Array<pair<string, int>>& hotelR
             review = line.substr(0, commaPos);
             rating = stoi(line.substr(commaPos + 1));
 
-            hotelReview.insert(make_pair(review, rating));
+            hotelReview.insert(review, rating);
             rowCount++;
         }
     }
@@ -163,12 +165,12 @@ float calculateSentimentScore(int positiveCount, int negativeCount) {
 }
 
 // Display sentiment summary
-void summarizeSentiment(Array<pair<string, int>>& hotelReviews, Array<string>& positiveWords, Array<string>& negativeWords,
+void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>& positiveWords, Array<string>& negativeWords,
     int& totalPositiveWords, int& totalNegativeWords, Array<int>& reviewRate, float& matchEvaluation, float& unmatchEvaluation)
 {
     for (int i = 0; i < hotelReviews.getSize(); i++) {
-        string review = hotelReviews.get(i).first;
-        int rating = hotelReviews.get(i).second;
+        string review = hotelReviews.getByIndex(i).getKey();
+        int rating = hotelReviews.getByIndex(i).getValue();
 
         Array<string> foundPositiveWords;
         Array<string> foundNegativeWords;
@@ -251,11 +253,11 @@ void concatenateArrays(Array<string>& positiveWords, Array<string>& negativeWord
 }
 
 // Count the frequency of positive and negative words in every review
-void countWordFrequency(Array<pair<string, int>>& hotelReviews, Array<pair<string, int>>& positiveAndNegativeWords) {
+void countWordFrequency(customArrayMap<string, int>& hotelReviews, Array<pair<string, int>>& positiveAndNegativeWords) {
     // Iterate through each review in hotelReviews
     for (int i = 0; i < hotelReviews.getSize(); i++) {
         // Extract the review (first part of the pair)
-        stringstream ss(hotelReviews.get(i).first);  // Get the review text
+        stringstream ss(hotelReviews.getByIndex(i).getKey());  // Get the review text
         string word;
 
         // Split the review into words
@@ -519,7 +521,7 @@ int main()
 {   
     Array<int> reviewRate(3, 0);
     Array<string> positiveWords, negativeWords;
-    Array<pair<string, int>> hotelReviews;
+    customArrayMap<string, int> hotelReviews;
     Array<string> minWords, maxWords;
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
@@ -533,17 +535,17 @@ int main()
     int totalNegativeWords = 0;
 
     summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
-        matchEvaluation, unmatchEvaluation);
+                        matchEvaluation, unmatchEvaluation);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
     
     Array<pair<string, int>> positiveAndNegativeWords;
     concatenateArrays(positiveWords, negativeWords, positiveAndNegativeWords);
     countWordFrequency(hotelReviews, positiveAndNegativeWords);
 
-    
+  
     auto startSort = high_resolution_clock::now(); //start the timer
 
-    //Choose sorting algorithm by comment/uncomment the line below that has the merge/quick sort function
+       //Choose sorting algorithm by comment/uncomment the line below that has the merge/quick sort function
     //mergeSort(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1);
     quickSortTailRecursive(positiveAndNegativeWords, 0, positiveAndNegativeWords.getSize() - 1);
 
@@ -557,5 +559,10 @@ int main()
     searchAlgo(positiveAndNegativeWords, minWords, maxWords);
     displayMinMaxWord(minWords, maxWords);
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
+
+    customArrayMap<string, int> c;
+    c.insert("xxx",23);
+    c.insert("xx0876543x",23);
+    cout << c.getByIndex(1).getKey() << endl;
     return 0;
 }
