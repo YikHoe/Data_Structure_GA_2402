@@ -47,6 +47,10 @@
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "LinkedList.cpp",
@@ -56,8 +60,7 @@
               "RelativeToolTip": "Project1\\LinkedList.cpp",
               "ViewState": "AgIAAI8AAAAAAAAAAAAcwJwAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-04T09:42:20.888Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-04T09:42:20.888Z"
             },
             {
               "$type": "Document",
@@ -69,8 +72,7 @@
               "RelativeToolTip": "Project1\\LinkedList.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-30T03:16:45.896Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-30T03:16:45.896Z"
             },
             {
               "$type": "Document",
@@ -82,8 +84,7 @@
               "RelativeToolTip": "Project1\\FileHandler.cpp",
               "ViewState": "AgIAAAYAAACgmZmZmdkvwBUAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-07T03:56:04.428Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-07T03:56:04.428Z"
             }
           ]
         }
