@@ -54,6 +54,9 @@ public:
     // Update value by key
     void update(K key, V value);
 
+    // Add frequency to 1 by key 
+    void addFreqByKey(K key);
+
     // Get value by key
     V get(K key);
 

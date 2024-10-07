@@ -1,9 +1,4 @@
-﻿  Array.cpp
-  ArrayMainProgram.cpp
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(60,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(200,24): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  customArrayMap.cpp
-  Generating Code...
-x64\Debug\FileHandler.obj : warning LNK4042: object specified more than once; extras ignored
-x64\Debug\WordLinkedList.obj : warning LNK4042: object specified more than once; extras ignored
-  Project1.vcxproj -> C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\x64\Debug\Project1.exe
+﻿  ArrayMainProgram.cpp
+C:\Users\Predator\OneDrive - Asia Pacific University\Current Assignments\DSTR\DSTR Part 1 Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(61,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Predator\OneDrive - Asia Pacific University\Current Assignments\DSTR\DSTR Part 1 Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(214,24): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  Project1.vcxproj -> C:\Users\Predator\OneDrive - Asia Pacific University\Current Assignments\DSTR\DSTR Part 1 Code\Data_Structure_GA_2402\x64\Debug\Project1.exe

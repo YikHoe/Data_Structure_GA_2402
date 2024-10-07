@@ -1,5 +1,6 @@
 #include "customArrayMap.hpp"
 #include <stdexcept>
+using namespace std;
 
 // Constructor
 template<class K, class V>
@@ -10,7 +11,7 @@ template<class K, class V>
 void customArrayMap<K, V>::insert(K key, V value)
 {
     if (containsKey(key)) {
-        throw std::invalid_argument("Key already exists.");
+        throw invalid_argument("Key already exists.");
     }
     mapData.insert(KeyValuePair<K, V>(key, value));
 }
@@ -25,7 +26,7 @@ void customArrayMap<K, V>::remove(K key)
             return;
         }
     }
-    throw std::out_of_range("Key not found.");
+    throw out_of_range("Key not found.");
 }
 
 // Update value by key
@@ -38,7 +39,20 @@ void customArrayMap<K, V>::update(K key, V value)
             return;
         }
     }
-    throw std::out_of_range("Key not found.");
+    throw out_of_range("Key not found.");
+}
+
+// Add frequency to 1 by key 
+template<class K, class V>
+void customArrayMap<K, V>::addFreqByKey(K key)
+{
+    for (int i = 0; i < mapData.getSize(); ++i) {
+        if (mapData.get(i).getKey() == key) {  // Use the getter method
+            mapData.get(i).value++; // Increment the frequency by 1
+            return;
+        }
+    }
+    throw out_of_range("Key not found.");
 }
 
 // Get value by key
@@ -50,7 +64,7 @@ V customArrayMap<K, V>::get(K key)
             return mapData.get(i).getValue(); // Use the getter method
         }
     }
-    throw std::out_of_range("Key not found.");
+    throw out_of_range("Key not found.");
 }
 
 // Check if key exists
@@ -76,7 +90,7 @@ int customArrayMap<K, V>::getSize()
 template<class K, class V>
 KeyValuePair<K, V>& customArrayMap<K, V>::getByIndex(int index) {
     if (index < 0 || index >= mapData.getSize()) {
-        throw std::out_of_range("Index is out of range");
+        throw out_of_range("Index is out of range");
     }
     return mapData.get(index); // Use the existing get method from Array
 }
