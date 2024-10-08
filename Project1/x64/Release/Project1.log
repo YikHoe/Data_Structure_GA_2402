@@ -1,0 +1,9 @@
+﻿  main.cpp
+C:\Users\yizun\OneDrive\Documents\GitHub\Data_Structure_GA_2402\Project1\main.cpp(58,17): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+x64\Release\FileHandler.obj : warning LNK4042: object specified more than once; extras ignored
+  Generating code
+  5 of 257 functions ( 1.9%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Project1.vcxproj -> C:\Users\yizun\OneDrive\Documents\GitHub\Data_Structure_GA_2402\x64\Release\Project1.exe

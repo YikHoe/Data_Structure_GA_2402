@@ -24,6 +24,9 @@ class LinkedList
 		Node* head, * tail;
 		int size = 0;
 		WordNode* word_head, * word_tail;
+		//jump searge algorithm
+		WordNode* jumpByBlockSize(int blockSize, WordNode* startNode);
+		void jumpList(WordNode*& current, int blockSize, int& frequency, bool findMax);
 
 		//merge sorge algorithm
 		WordNode* mergeLists(WordNode* left, WordNode* right);
@@ -50,11 +53,13 @@ class LinkedList
 		void deleteBack();
 		void displayList();
 		void printReport();
+		void displayMinMaxWord(int frequency);
 
-		//linear serach
-		bool linearSearch(string word);
-		void linearFindMax();
-		void linearFindMin();
+
+		//jump serach
+		bool jumpSearch(string word);
+		void jumpFindMax();
+		void jumpFindMin();
 
 		//merge sort
 		WordNode* mergeSort(WordNode* head);
@@ -76,5 +81,6 @@ class LinkedList
 		Node* getTail();
 		WordNode* getWordHead();
 		WordNode* getWordTail();
+		int getSize();
 };
 #endif

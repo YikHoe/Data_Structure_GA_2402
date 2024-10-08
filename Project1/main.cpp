@@ -128,8 +128,13 @@ static void displayFinalSummary(const Summary& summary) {
     }
 }
 
+// Function pointer type for search functions
+using SearchFunction = bool (LinkedList::*)(string);
+using SortFunction = void (LinkedList::*)();
+
+
 // WONG YI ZUN (merge sort + linear search)
-static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
+static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, SortFunction sortFunction) {
 	LinkedList wordList, accumulatedWordList;
 	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
 	auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
@@ -143,22 +148,24 @@ static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveLis
 		cout << string(120, '=') << endl;
 
 		tokenize(currentReviewNode->review, wordList);
+        (wordList.*sortFunction)();
 
         // Timer for search algorithm
         auto searchStartTime = high_resolution_clock::now();
 
-		for (WordNode* currentWord = wordList.getWordHead(); currentWord != nullptr; currentWord = currentWord->nextAddress) {
-			if (positiveList.linearSearch(currentWord->word)) {
+        for (WordNode* currentWord = wordList.getWordHead(); currentWord != nullptr; currentWord = currentWord->nextAddress) {
+            if ((positiveList.*searchFunction)(currentWord->word)) {
                 accumulatedWordList.checkDuped(currentWord->word);
                 totalPositiveCount++;
-				positiveCount++;
-			}
-			else if(negativeList.linearSearch(currentWord->word)) {
+                positiveCount++;
+            }
+            else if ((negativeList.*searchFunction)(currentWord->word)) {
                 accumulatedWordList.checkDuped(currentWord->word);
                 totalNegativeCount++;
-				negativeCount++;
-			}
-		}
+                negativeCount++;
+            }
+        }
+
 
 		auto searchEndTime = high_resolution_clock::now();
 		auto searchDuration = duration_cast<microseconds>(searchEndTime - searchStartTime);
@@ -188,7 +195,7 @@ static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveLis
 	// Timer for sort algorithm
 	auto sortStartTime = high_resolution_clock::now();
 
-	accumulatedWordList.mergeSortByFrequency(); // Assuming this is where sorting happens
+    (accumulatedWordList.*sortFunction)();
 
 	auto sortEndTime = high_resolution_clock::now();
 	auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
@@ -196,8 +203,8 @@ static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveLis
 	displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
 	cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
 	cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
-	accumulatedWordList.linearFindMax();
-	accumulatedWordList.linearFindMin();
+	accumulatedWordList.jumpFindMax();
+	accumulatedWordList.jumpFindMin();
 	displayFinalSummary(summary);
 }
 
@@ -290,10 +297,43 @@ int main() {
 	readWordFromText("positive-words.txt", positiveList);
 	readWordFromText("negative-words.txt", negativeList);
 
-	auto startTime = high_resolution_clock::now();
+    int choice, sortChoice;
+    SearchFunction searchFunction;
+    SortFunction sortFunction;
 
-	//processReviewsAlgo1(reviewsList, positiveList, negativeList, summary); // Linked List algorithm 1 (merge + linear)
-	processReviewsAlgo2(reviewsList, positiveList, negativeList, summary); // Linled List algorithm 2 (quick + binary)
+    cout << "Choose Search Algorithm:\n1. Binary Search\n2. Jump Search\n";
+    cin >> choice;
+
+    if (choice == 1) {
+        searchFunction = &LinkedList::binarySearch;
+    }
+    else if(choice == 2) {
+        searchFunction = &LinkedList::jumpSearch;
+    }
+    else {
+        cout << "Invalid choice, defaulting to Linear Search." << endl;
+        searchFunction = &LinkedList::jumpSearch;
+    }
+
+    cout << "Choose Sort Algorithm:\n1. Quick Sort\n2. Merge Sort\n";
+    cin >> sortChoice;
+
+    if (sortChoice == 1) {
+        sortFunction = &LinkedList::quickSortByFrequency;
+    }
+    else if (choice == 2) {
+        cout << "Invalid choice, defaulting to Merge Sort." << endl;
+        sortFunction = &LinkedList::mergeSortByFrequency;
+    }
+    else {
+        sortFunction = &LinkedList::mergeSortByFrequency;
+    }
+
+
+    auto startTime = high_resolution_clock::now();
+
+
+    processReviewsAlgo1(reviewsList, positiveList, negativeList, summary, searchFunction, sortFunction);
 
 	auto endTime = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(endTime - startTime);
