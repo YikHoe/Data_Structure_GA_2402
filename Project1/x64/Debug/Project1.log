@@ -1,2 +1,6 @@
-﻿  FileHandler.cpp
-  Project1.vcxproj -> D:\GitHub Desktop\Data_Structure_GA_2402\x64\Debug\Project1.exe
+﻿  LinkedList.cpp
+  main.cpp
+C:\Users\yizun\OneDrive\Documents\GitHub\Data_Structure_GA_2402\Project1\main.cpp(58,17): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+  Generating Code...
+x64\Debug\FileHandler.obj : warning LNK4042: object specified more than once; extras ignored
+  Project1.vcxproj -> C:\Users\yizun\OneDrive\Documents\GitHub\Data_Structure_GA_2402\x64\Debug\Project1.exe

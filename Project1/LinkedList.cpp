@@ -11,6 +11,23 @@
 
 using namespace std::chrono;
 
+class Timer {
+public:
+    Timer() {
+        start = high_resolution_clock::now();
+    }
+
+    ~Timer() {
+        stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Duration: " << duration.count() << " microseconds" << std::endl;
+    }
+
+private:
+    time_point<high_resolution_clock> start, stop;
+};
+
+
 Node::Node(string review_string, string rating_given) : review(review_string), rating(rating_given), nextAddress(nullptr) {}
 WordNode::WordNode(string word_string) : word(word_string), frequency(0), nextAddress(nullptr) {}
 
@@ -447,6 +464,7 @@ WordNode* LinkedList::getMiddle(WordNode* head, WordNode* tail) {
 }
 
 bool LinkedList::binarySearch(string target) {
+    Timer timer;
     WordNode* start = word_head;
     WordNode* end = nullptr;
 

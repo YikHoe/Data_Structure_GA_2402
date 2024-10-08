@@ -20,6 +20,8 @@ struct Summary {
     int totalReviews = 0;
 };
 
+
+
 static void tokenize(string review, LinkedList& list) {
     string word = "";
     for (char c : review) {
@@ -204,6 +206,7 @@ static void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, L
     LinkedList accumulatedWordList;
     int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
     auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
+
 
     for (Node* currentReviewNode = reviews.getHead(); currentReviewNode != nullptr; currentReviewNode = currentReviewNode->nextAddress) {
         LinkedList wordList;
