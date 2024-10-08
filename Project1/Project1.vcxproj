@@ -129,21 +129,11 @@
   <ItemGroup>
     <ClCompile Include="Array.cpp" />
     <ClCompile Include="customArrayMap.cpp" />
-    <ClCompile Include="FileHandler.cpp" />
-    <ClCompile Include="FileHandler.h" />
-    <ClCompile Include="LinearSearch.cpp" />
-    <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="ArrayMainProgram.cpp" />
-    <ClCompile Include="QuickSort.cpp" />
-    <ClCompile Include="WordLinkedList.cpp" />
-    <ClCompile Include="WordLinkedList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array.hpp" />
     <ClInclude Include="customArrayMap.hpp" />
-    <ClInclude Include="LinearSearch.h" />
-    <ClInclude Include="LinkedList.h" />
-    <ClInclude Include="QuickSort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

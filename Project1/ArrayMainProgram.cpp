@@ -1,11 +1,11 @@
-//References
+﻿//References
 //Krahets. (n.d.-a). 11.5 Quick sort - Hello Algo. Hello Algo. 
 //      https://www.hello-algo.com/en/chapter_sorting/quick_sort/
 
 //Krahets. (n.d.-b). 11.6 Merge sort - Hello Algo. Hello Algo. 
 //      https://www.hello-algo.com/en/chapter_sorting/merge_sort/
 
-//AHIRLABS. (n.d.).Recursive Binary Search in Cpp Programming � AHIRLABS.
+//AHIRLABS. (n.d.).Recursive Binary Search in Cpp Programming – AHIRLABS.
 //      https://www.ahirlabs.com/programing/cpp-programming/recursive-binary-search/ 
 
 // BEKOAIL, P. F. (2019, November 13). Binary search a left/right most element when there are duplicates. Stack Overflow. 
@@ -17,6 +17,7 @@
 #include <string>
 #include <fstream>
 #include <chrono>
+#include <cmath>
 
 using namespace std;
 using namespace std::chrono;
@@ -92,24 +93,60 @@ void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hot
     }
 }
 
-//linear search to count word
-void linearSearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, bool& isPositive, customArrayMap<string, int>& wordFreq) {
-    //Loop the whole words array
-    for (int i = 0; i < words.getSize(); i++) {
-        // If the word is matching the correct word
-        if (word == words.get(i)){
-            //Add the word count and insert the word into foundWords array
+////linear search to count word
+//void linearSearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, bool& isPositive, customArrayMap<string, int>& wordFreq) {
+//    //Loop the whole words array
+//    for (int i = 0; i < words.getSize(); i++) {
+//        // If the word is matching the correct word
+//        if (word == words.get(i)){
+//            //Add the word count and insert the word into foundWords array
+//            wordCount++;
+//            foundWords.insert(word);
+//            if(wordFreq.containsKey(word)){
+//                //add freq in wordFreq array        
+//                wordFreq.addFreqByKey(word);
+//            } else{
+//				wordFreq.insert(word, 1);
+//            }
+//            // Set positive status to true to avoid repeat searching
+//            isPositive = true;
+//            break;
+//        }
+//    }
+//}
+
+void jumpSearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, 
+    bool& isPositive, customArrayMap<string, int>& wordFreq) {
+    int n = words.getSize();  // Get size of the array
+    int step = sqrt(n);       // Block size for jumping (√n)
+    int prev = 0;
+
+    // Jump in blocks until we find a block that may contain the word
+    while (words.get(min(step, n) - 1) < word) {
+        prev = step;          // Update the previous block starting point
+        step += sqrt(n);      // Move to the next block
+        if (prev >= n)        // If we've gone past the array's bounds, exit
+            return;
+    }
+
+    // Perform linear search within the block starting from 'prev'
+    for (int i = prev; i < min(step, n); ++i) {
+        if (words.get(i) == word) {
+            // Add the word count and insert the word into foundWords array
             wordCount++;
             foundWords.insert(word);
-            if(wordFreq.containsKey(word)){
-                //add freq in wordFreq array        
+
+            if (wordFreq.containsKey(word)) {
+                // Add freq in wordFreq array
                 wordFreq.addFreqByKey(word);
-            } else{
-				wordFreq.insert(word, 1);
             }
+            else {
+                wordFreq.insert(word, 1);
+            }
+
             // Set positive status to true to avoid repeat searching
             isPositive = true;
-            break;
+            break;  // We can stop after finding the word
         }
     }
 }
@@ -171,11 +208,13 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
         bool isPositive = false;
 
         // Use search algorithm to check if word is in positive or negative words list
-        linearSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        jumpSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        //binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
 
         // Run only if the word is not found in positive
         if (!isPositive) {
-            linearSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            jumpSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            //binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
         }
     }
 
@@ -272,9 +311,31 @@ void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>
     }
 }
 
-void linearSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Array<string>& words) {
+//void linearSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Array<string>& words) {
+//
+//    for (int i = 0; i < wordFrequency.getSize(); i++) {
+//        int wordFreq = wordFrequency.getByIndex(i).getValue();
+//        if (wordFreq == targetFreq) {
+//            words.insert(wordFrequency.getByIndex(i).getKey());
+//        }
+//    }
+//}
 
-    for (int i = 0; i < wordFrequency.getSize(); i++) {
+void jumpSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Array<string>& words) {
+    int n = wordFrequency.getSize();  // Get size of the map
+    int step = sqrt(n);               // Block size for jumping (√n)
+    int prev = 0;
+
+    // Jump in blocks until we find the block where targetFreq could be
+    while (wordFrequency.getByIndex(min(step, n) - 1).getValue() < targetFreq) {
+        prev = step;          // Update the previous block starting point
+        step += sqrt(n);      // Move to the next block
+        if (prev >= n)        // If we've gone past the array's bounds, exit
+            return;
+    }
+
+    // Perform linear search within the block starting from 'prev'
+    for (int i = prev; i < min(step, n); ++i) {
         int wordFreq = wordFrequency.getByIndex(i).getValue();
         if (wordFreq == targetFreq) {
             words.insert(wordFrequency.getByIndex(i).getKey());
@@ -282,7 +343,7 @@ void linearSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, A
     }
 }
 
-//Recursive Binary Searching, adapt from (Recursive Binary Search in Cpp Programming � AHIRLABS, n.d.)
+//Recursive Binary Searching, adapt from (Recursive Binary Search in Cpp Programming – AHIRLABS, n.d.)
 //Mark visited array index to avoid repeating, adapted from (Binary Search a Left/Right Most Element When There Are Duplicates, n.d.)
 void binarySearch(customArrayMap<string, int>& wordFrequency, int low, int high, int targetFreq, Array<bool>& visited, Array<string>& words) {
     if (low <= high) {
@@ -336,21 +397,21 @@ void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWo
     auto searchStart = high_resolution_clock::now(); 
 
     //Binary Search for Max Words
-    binarySearch(wordFrequency, lowInd, highInd, maxFreq, visited, maxWords);
+    //binarySearch(wordFrequency, lowInd, highInd, maxFreq, visited, maxWords);
 
     //reset visited array ind for Binary search
-    for (int i = 0; i < visited.getSize(); i++) {
-        visited.update(i, false);
-    }
+    //for (int i = 0; i < visited.getSize(); i++) {
+    //    visited.update(i, false);
+    //}
 
     //Binary Search for Min Words
-    binarySearch(wordFrequency, 0, highInd, minFreq, visited, minWords);
+    //binarySearch(wordFrequency, 0, highInd, minFreq, visited, minWords);
 
     //Linear Search for Max Words
-    //linearSearch(wordFrequency, maxFreq, maxWords);
+    jumpSearch(wordFrequency, maxFreq, maxWords);
 
     //Linear Search for Min Words
-    //linearSearch(wordFrequency, minFreq, minWords);
+    jumpSearch(wordFrequency, minFreq, minWords);
 
     //Stop timing
     auto searchStop = high_resolution_clock::now(); 
@@ -542,8 +603,8 @@ int main()
     auto startSort = high_resolution_clock::now(); //start the timer
 
     //Choose sorting algorithm by comment/uncomment the line below that has the merge/quick sort function
-    //mergeSort(wordFrequency, 0, wordFrequency.getSize() - 1);
-    quickSortTailRecursive(wordFrequency, 0, wordFrequency.getSize() - 1);
+    mergeSort(wordFrequency, 0, wordFrequency.getSize() - 1);
+    //quickSortTailRecursive(wordFrequency, 0, wordFrequency.getSize() - 1);
 
     auto stopSort = high_resolution_clock::now(); //stop the timer
 
