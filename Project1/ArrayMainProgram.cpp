@@ -76,8 +76,6 @@ void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hot
     // Skip header
     getline(file, line);
 
-    int rowCount = 0;
-    //Modify here to set how many rows to read
     while (getline(file, line)) {
         string review;
         int rating;
@@ -86,9 +84,7 @@ void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hot
         if (commaPos != string::npos) {
             review = line.substr(0, commaPos);
             rating = stoi(line.substr(commaPos + 1));
-
             hotelReview.insert(review, rating);
-            rowCount++;
         }
     }
 }
@@ -188,7 +184,7 @@ void binarySearchForWords(Array<string>& words, string& word, int& wordCount, Ar
 
 // Count the positive and negative word for each review
 void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords,
-    int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords, int& i, customArrayMap<string, int>& wordFreq) {
+    int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords, int& i, customArrayMap<string, int>& wordFreq, microseconds& totalSearchDuration) {
 
     // Reset the positive and negative word count for each review
     positiveCount = 0;
@@ -208,13 +204,13 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
         bool isPositive = false;
 
         // Use search algorithm to check if word is in positive or negative words list
-        jumpSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
-        //binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        //jumpSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
 
         // Run only if the word is not found in positive
         if (!isPositive) {
-            jumpSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
-            //binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            //jumpSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
         }
     }
 
@@ -222,6 +218,7 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
     auto countWordStop = high_resolution_clock::now();
     auto countWordDuration = duration_cast<milliseconds>(countWordStop - countWordStart);
     cout << "Count Word Execution time for Review " << i + 1 << ": " << countWordDuration.count() << " milliseconds" << endl;
+    totalSearchDuration += countWordDuration;
 }
 
 // Calculate the normalized sentiment score
@@ -239,7 +236,8 @@ float calculateSentimentScore(int positiveCount, int negativeCount) {
 
 // Display sentiment summary
 void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>& positiveWords, Array<string>& negativeWords,
-    int& totalPositiveWords, int& totalNegativeWords, Array<int>& reviewRate, float& matchEvaluation, float& unmatchEvaluation, customArrayMap<string, int>& wordFreq)
+    int& totalPositiveWords, int& totalNegativeWords, Array<int>& reviewRate, float& matchEvaluation, float& unmatchEvaluation, customArrayMap<string, int>& wordFreq,
+    microseconds& totalSearchDuration)
 {
     for (int i = 0; i < hotelReviews.getSize(); i++) {
         string review = hotelReviews.getByIndex(i).getKey();
@@ -248,8 +246,7 @@ void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>
         Array<string> foundPositiveWords;
         Array<string> foundNegativeWords;
         int positiveCount = 0, negativeCount = 0;
-        countPositiveNegativeWords(review, positiveWords, negativeWords, positiveCount, negativeCount, foundPositiveWords, foundNegativeWords, i, wordFreq);
-        
+        countPositiveNegativeWords(review, positiveWords, negativeWords, positiveCount, negativeCount, foundPositiveWords, foundNegativeWords, i, wordFreq, totalSearchDuration);
         //Update total counts
         totalPositiveWords += positiveCount;
         totalNegativeWords += negativeCount;
@@ -335,10 +332,14 @@ void jumpSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Arr
     }
 
     // Perform linear search within the block starting from 'prev'
-    for (int i = prev; i < min(step, n); ++i) {
+    //for (int i = prev; i < min(step, n); ++i) {
+    for (int i = prev; i < n; ++i) {
         int wordFreq = wordFrequency.getByIndex(i).getValue();
         if (wordFreq == targetFreq) {
             words.insert(wordFrequency.getByIndex(i).getKey());
+        }
+        else if (wordFreq >= targetFreq) {
+            break;
         }
     }
 }
@@ -407,10 +408,10 @@ void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWo
     //Binary Search for Min Words
     //binarySearch(wordFrequency, 0, highInd, minFreq, visited, minWords);
 
-    //Linear Search for Max Words
+    //Jump Search for Max Words
     jumpSearch(wordFrequency, maxFreq, maxWords);
 
-    //Linear Search for Min Words
+    //Jump Search for Min Words
     jumpSearch(wordFrequency, minFreq, minWords);
 
     //Stop timing
@@ -418,7 +419,7 @@ void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWo
 
     //Calculate Search Time
     auto searchDuration = duration_cast<microseconds>(searchStop - searchStart);
-    cout << "Search Execution time:" << searchDuration.count() << "micro seconds" << endl;
+    cout << "Search Execution time for Maximum and Minimum Word : " << searchDuration.count() << " microseconds" << endl;
 }
 
 void displayMinMaxWord(Array<string>& minWords, Array<string>& maxWords) {
@@ -584,6 +585,8 @@ int main()
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
+    // Initialize totalSearchDuration as 0 microseconds
+    microseconds totalSearchDuration = microseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
@@ -595,9 +598,8 @@ int main()
     float unmatchEvaluation = 0;
     int totalPositiveWords = 0;  // Initialize variables to store totals
     int totalNegativeWords = 0;
-
     summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
-        matchEvaluation, unmatchEvaluation, wordFrequency);
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
 
     auto startSort = high_resolution_clock::now(); //start the timer
@@ -617,6 +619,7 @@ int main()
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
     auto stopProgram = high_resolution_clock::now();
     auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
+    cout << "Total Search time:" << totalSearchDuration.count() << "micro seconds" << endl;
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
     return 0;
 }
