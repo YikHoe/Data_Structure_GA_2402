@@ -33,6 +33,7 @@ class LinkedList
 
 		// binary search alogorithm
 		WordNode* getMiddle(WordNode* head, WordNode* tail);
+		void binaryFindAll(WordNode* start, WordNode* end, int frequency, bool max_or_min);
 
 	public:
 		LinkedList();
@@ -48,8 +49,8 @@ class LinkedList
 
 		//linear serach
 		LinkedList findMatchingWords(LinkedList& positiveList, LinkedList& negativeList);
-		void max();
-		void min();
+		void linearFindmax();
+		void linearFindmin();
 
 		//merge sort
 		WordNode* mergeLists(WordNode* left, WordNode* right);
@@ -66,6 +67,9 @@ class LinkedList
 
 		// binary search
 		bool binarySearch(string target);
+		void binaryFindMax();
+		void binaryFindMin();
+
 		void resetFrequencies();
 		void checkDuped(string word);
 

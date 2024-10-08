@@ -22,21 +22,23 @@ struct Summary {
 
 void tokenize(string review, LinkedList& list) {
     string word = "";
-
     for (char c : review) {
-        // Check if the character is a valid ASCII alphanumeric character
-        if (isascii(c) && isalnum(c)) {
-            word += tolower(c); // Convert to lowercase
+        // Manually check if the character is alphanumeric
+        if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+            // Manually convert to lowercase if it's an uppercase letter
+            if (c >= 'A' && c <= 'Z') {
+                c = c + 32; // Convert to lowercase by adding ASCII offset
+            }
+            word += c;
         }
         else {
-            // If we reach a non-alphanumeric character and have a valid word, insert it
             if (!word.empty()) {
                 list.insertFront(word);
-                word = ""; // Clear the word after inserting
+                word = "";
             }
         }
     }
-    // Insert the last word if there's one remaining
+
     if (!word.empty()) {
         list.insertFront(word);
     }
@@ -190,8 +192,8 @@ void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, Link
 	displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
 	cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
 	cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
-	accumulatedWordList.max();
-	accumulatedWordList.min();
+	accumulatedWordList.linearFindmax();
+	accumulatedWordList.linearFindmin();
 	displayFinalSummary(summary);
 }
 
@@ -260,19 +262,19 @@ void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedLi
     // Timer for sort algorithm
     auto sortStartTime = high_resolution_clock::now();
 
-    accumulatedWordList.sortByFrequency(); // Assuming this is where sorting happens
+    accumulatedWordList.quickSortByFrequency(); // Assuming this is where sorting happens
 
     auto sortEndTime = high_resolution_clock::now();
     auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
 
     displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
-    
-    cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
-    cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
-    accumulatedWordList.max();
-    accumulatedWordList.min();
+    accumulatedWordList.binaryFindMin();
+    accumulatedWordList.binaryFindMax();
 
     displayFinalSummary(summary);
+
+    cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
+    cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
 }
 
 int main() {
@@ -286,7 +288,7 @@ int main() {
 	auto startTime = high_resolution_clock::now();
 
 	//processReviewsAlgo1(reviewsList, positiveList, negativeList, summary); // Linked List algorithm 1 (merge + linear)
-	//processReviewsAlgo2(reviewsList, positiveList, negativeList, summary); // Linled List algorithm 2 (quick + binary)
+	processReviewsAlgo2(reviewsList, positiveList, negativeList, summary); // Linled List algorithm 2 (quick + binary)
 
 	auto endTime = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(endTime - startTime);

@@ -187,7 +187,7 @@ LinkedList LinkedList::findMatchingWords(LinkedList& positiveList, LinkedList& n
 	return foundedList;  // Return the list containing matching words
 }
 
-void LinkedList::max() {
+void LinkedList::linearFindmax() {
 	if (word_tail == nullptr) {
 		return;
 	}
@@ -207,7 +207,7 @@ void LinkedList::max() {
 
 }
 
-void LinkedList::min() {
+void LinkedList::linearFindmin() {
 	if (word_tail == nullptr) {
 		return;
 	}
@@ -479,6 +479,84 @@ bool LinkedList::binarySearch(string target) {
     }
 
     return false;
+}
+
+// max_or_max serve as flag to determine find max or find min
+// FIND MAX : 0 | false
+// FIND MIN : 1 | true
+void LinkedList::binaryFindAll(WordNode* start, WordNode* end, int frequency, bool max_or_min) {
+    // * terminate process if linked list is null * //
+    if (start == end || start == nullptr) {
+        return;
+    }
+
+    WordNode* mid = getMiddle(start, end);
+
+    // * terminate process if linked list has only 1 node * //
+    if (mid == nullptr) {
+        return;
+    }
+
+    if (mid->frequency == frequency) {
+        cout << mid->word << ", ";
+    }
+
+    // search left of the list
+    if (max_or_min == true && mid->frequency >= frequency) {
+        binaryFindAll(start, mid, frequency, max_or_min);
+    }
+    else if (max_or_min == false && mid->frequency <= frequency) {
+        binaryFindAll(start, mid, frequency, max_or_min);
+    }
+    
+    // search right of the list
+    binaryFindAll(mid->nextAddress, end, frequency, max_or_min);
+
+}
+
+void LinkedList::binaryFindMax() {
+    if (word_tail == nullptr) {
+        return;
+    }
+
+    // Find the maximum frequency (in your case, it's at word_tail)
+    int maxWordCount = word_tail->frequency;
+
+    cout << "Maximum used word in the reviews : ";
+
+    // Start binary search for all words with maximum frequency
+    WordNode* start = word_head;
+    WordNode* end = nullptr;
+
+    binaryFindAll(start, end, maxWordCount, 0);
+    
+    cout << endl << endl;
+}
+
+void LinkedList::binaryFindMin() {
+    if (word_tail == nullptr) {
+        return;
+    }
+
+    int minWordCount = word_head->frequency;
+    cout << "Minimum used word in the reviews : ";
+
+    WordNode* current = word_head;
+
+    while (current != nullptr) {
+        if (current->frequency < minWordCount) {
+            minWordCount = current->frequency;
+        }
+        current = current->nextAddress;
+    }
+
+    // Now perform a binary search to find all nodes with that minimum frequency
+    WordNode* start = word_head;
+    WordNode* end = nullptr;
+
+    binaryFindAll(start, end, minWordCount, 1);
+
+    cout << endl << endl;
 }
 
 void LinkedList::resetFrequencies() {
