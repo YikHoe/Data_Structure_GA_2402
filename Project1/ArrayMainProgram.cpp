@@ -24,17 +24,20 @@ using namespace std::chrono;
 // Tokenize and seperate the word
 void tokenize(string review, Array<string>& list) {
     string word = "";
-
     for (char c : review) {
-        // Check if the character is a valid ASCII alphanumeric character
-        if (isascii(c) && isalnum(c)) {
-            word += tolower(c); // Convert to lowercase
+        // Manually check if the character is alphanumeric
+        if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+            // Manually convert to lowercase if it's an uppercase letter
+            if (c >= 'A' && c <= 'Z') {
+                c = c + 32; // Convert to lowercase by adding ASCII offset
+            }
+            word += c;
         }
         else {
             // If we reach a non-alphanumeric character and have a valid word, insert it
             if (!word.empty()) {
                 list.insert(word);
-                word.clear(); // Clear the word after inserting
+                word = ""; // Clear the word after inserting
             }
         }
     }
@@ -74,7 +77,7 @@ void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hot
 
     int rowCount = 0;
     //Modify here to set how many rows to read
-    while (getline(file, line) && rowCount < 300) {
+    while (getline(file, line)) {
         string review;
         int rating;
 
@@ -269,7 +272,6 @@ void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>
     }
 }
 
-
 void linearSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Array<string>& words) {
 
     for (int i = 0; i < wordFrequency.getSize(); i++) {
@@ -309,7 +311,7 @@ void binarySearch(customArrayMap<string, int>& wordFrequency, int low, int high,
     }
 }
 
-// Search Algorithm for Maximum and Minimum word 
+// Search Algorithm for Maximum and Minimum word
 void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWords, Array<string>& maxWords) {
     int lowInd = 0;
     int highInd = wordFrequency.getSize() - 1;

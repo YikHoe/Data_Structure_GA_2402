@@ -31,9 +31,6 @@ public:
 	//Insert element to the end method
 	void insert(T value);
 
-	//Clear the element in the array
-	void clear();
-
 	//Delete an element at a given index
 	void remove(int index);
 

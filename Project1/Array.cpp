@@ -43,12 +43,6 @@ void Array<T>::insert(T value)
 }
 
 template <class T>
-void Array<T>::clear() {
-	// Simply reset the size to 0, so no elements are considered present
-	size = 0;
-}
-
-template <class T>
 void Array<T>::remove(int index)
 {
 	if (index >= 0 && index < size)

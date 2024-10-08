@@ -5,6 +5,18 @@
     {
       "AbsoluteMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\ArrayMainProgram.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|solutionrelative:Project1\\ArrayMainProgram.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\Array.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|solutionrelative:Project1\\Array.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\customArrayMap.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|solutionrelative:Project1\\customArrayMap.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\Array.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{96AE686C-2539-4A54-BD5D-8BF633C00EE5}|Project1\\Project1.vcxproj|solutionrelative:Project1\\Array.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -32,10 +44,50 @@
               "RelativeDocumentMoniker": "Project1\\ArrayMainProgram.cpp",
               "ToolTip": "C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\ArrayMainProgram.cpp",
               "RelativeToolTip": "Project1\\ArrayMainProgram.cpp",
-              "ViewState": "AQIAAHUBAAAAAAAAAAAAAOEBAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEEAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-10-08T02:23:13.63Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Array.cpp",
+              "DocumentMoniker": "C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\Array.cpp",
+              "RelativeDocumentMoniker": "Project1\\Array.cpp",
+              "ToolTip": "C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\Array.cpp",
+              "RelativeToolTip": "Project1\\Array.cpp",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAACoAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-08T05:57:11.613Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Array.hpp",
+              "DocumentMoniker": "C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\Array.hpp",
+              "RelativeDocumentMoniker": "Project1\\Array.hpp",
+              "ToolTip": "C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\Array.hpp",
+              "RelativeToolTip": "Project1\\Array.hpp",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAAB8AAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-08T05:56:27.568Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "customArrayMap.cpp",
+              "DocumentMoniker": "C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\customArrayMap.cpp",
+              "RelativeDocumentMoniker": "Project1\\customArrayMap.cpp",
+              "ToolTip": "C:\\Users\\Predator\\OneDrive - Asia Pacific University\\Current Assignments\\DSTR\\DSTR Part 1 Code\\Data_Structure_GA_2402\\Project1\\customArrayMap.cpp",
+              "RelativeToolTip": "Project1\\customArrayMap.cpp",
+              "ViewState": "AQIAACEAAAAAAAAAAAAAAC8AAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-08T05:39:40.261Z"
             }
           ]
         }
