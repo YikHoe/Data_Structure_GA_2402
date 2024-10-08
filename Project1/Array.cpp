@@ -154,5 +154,4 @@ template class Array<wchar_t>;
 template class Array<char16_t>;
 template class Array<char32_t>;
 template class Array<bool>;
-template class Array<pair<string, int>>;
 template class Array<KeyValuePair<string, int>>;

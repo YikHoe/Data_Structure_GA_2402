@@ -10,9 +10,6 @@ customArrayMap<K, V>::customArrayMap() : mapData() {}
 template<class K, class V>
 void customArrayMap<K, V>::insert(K key, V value)
 {
-    if (containsKey(key)) {
-        throw invalid_argument("Key already exists.");
-    }
     mapData.insert(KeyValuePair<K, V>(key, value));
 }
 
