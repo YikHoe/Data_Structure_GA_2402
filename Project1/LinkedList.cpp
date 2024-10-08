@@ -203,7 +203,8 @@ WordNode* LinkedList::jumpByBlockSize(int blockSize, WordNode* startNode) {
 
 bool LinkedList::jumpSearch(string word) {
 	// Set a fixed block size for jumping
-	int blockSize = 3;
+	int listSize = getSize();
+	int blockSize = round(sqrt(listSize));
 	WordNode* current = word_head;
 	WordNode* prev = nullptr;
 
@@ -254,7 +255,8 @@ void LinkedList::jumpFindMax() {
 	}
 
 	// Set a fixed block size for jumping
-	int blockSize = 3;
+	int listSize = getSize();
+	int blockSize = round(sqrt(listSize));
 	int maxFrequency = word_tail->frequency;
 	WordNode* current = word_head;
 
@@ -274,7 +276,8 @@ void LinkedList::jumpFindMin() {
 	}
 
 	// Set a fixed block size for jumping
-	int blockSize = 3;
+	int listSize = getSize();
+	int blockSize = round(sqrt(listSize));
 	int minFrequency = word_head->frequency;
 	WordNode* current = word_head;
 
@@ -675,7 +678,7 @@ int LinkedList::getSize() {
 	while (currentWord != nullptr) {
 		size++;
 		currentWord = currentWord->nextAddress;
-	}
+ 	}
 	return size;
 }
 
