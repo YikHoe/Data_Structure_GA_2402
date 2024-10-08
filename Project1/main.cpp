@@ -20,7 +20,7 @@ struct Summary {
     int totalReviews = 0;
 };
 
-void tokenize(string review, LinkedList& list) {
+static void tokenize(string review, LinkedList& list) {
     string word = "";
 
     for (char c : review) {
@@ -42,7 +42,7 @@ void tokenize(string review, LinkedList& list) {
     }
 }
 
-int calculateSentimentScore(int positiveCount, int negativeCount) {
+static int calculateSentimentScore(int positiveCount, int negativeCount) {
     int N = positiveCount + negativeCount;
     int rawScore = positiveCount - negativeCount;
     int minRawScore = -N;
@@ -55,7 +55,7 @@ int calculateSentimentScore(int positiveCount, int negativeCount) {
 }
 
 // compare sentimental score and the rating given
-void analyzeScore(int sentimentScore, int ratingGiven, Summary& summary) {
+static void analyzeScore(int sentimentScore, int ratingGiven, Summary& summary) {
     string result = (sentimentScore != ratingGiven) ? "does not match" : "matches";
     string consistency = (sentimentScore != ratingGiven) ? "inconsistency" : "consistency";
 
@@ -93,7 +93,7 @@ void analyzeScore(int sentimentScore, int ratingGiven, Summary& summary) {
         << endl << endl;
 }
 
-void displayCount(int reviewCount, int totalPositiveCount, int totalNegativeCount, LinkedList& accumulatedWordList) {
+static void displayCount(int reviewCount, int totalPositiveCount, int totalNegativeCount, LinkedList& accumulatedWordList) {
     cout << "Total Reviews Processed = " << reviewCount << endl;
     cout << "Total Count of Positive Words = " << totalPositiveCount << endl;
     cout << "Total Count of Negative Words = " << totalNegativeCount << endl;
@@ -101,7 +101,7 @@ void displayCount(int reviewCount, int totalPositiveCount, int totalNegativeCoun
     accumulatedWordList.printReport();
 }
 
-void displayFinalSummary(const Summary& summary) {
+static void displayFinalSummary(const Summary& summary) {
     std::cout << "----------------------------------Final Summary----------------------------------" << endl;
     std::cout << "Total Positive Review       : " << summary.totalPositive << endl;
     std::cout << "Total Neutral Review        : " << summary.totalNeutral << endl;
@@ -125,7 +125,7 @@ void displayFinalSummary(const Summary& summary) {
 }
 
 // WONG YI ZUN (merge sort + linear search)
-void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
+static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
 	LinkedList wordList, accumulatedWordList;
 	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
 	auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
@@ -139,21 +139,21 @@ void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, Link
 		cout << string(120, '=') << endl;
 
 		tokenize(currentReviewNode->review, wordList);
-		LinkedList foundedList = wordList.findMatchingWords(positiveList, negativeList);
 
-		// Timer for search algorithm
-		auto searchStartTime = high_resolution_clock::now();
+        // Timer for search algorithm
+        auto searchStartTime = high_resolution_clock::now();
 
-		for (WordNode* currentWord = foundedList.getWordHead(); currentWord != nullptr; currentWord = currentWord->nextAddress) {
+		for (WordNode* currentWord = wordList.getWordHead(); currentWord != nullptr; currentWord = currentWord->nextAddress) {
 			if (positiveList.linearSearch(currentWord->word)) {
-				foundPositiveList.checkDuped(currentWord->word);
+                accumulatedWordList.checkDuped(currentWord->word);
+                totalPositiveCount++;
 				positiveCount++;
 			}
-			else {
-				foundNegativeList.checkDuped(currentWord->word);
+			else if(negativeList.linearSearch(currentWord->word)) {
+                accumulatedWordList.checkDuped(currentWord->word);
+                totalNegativeCount++;
 				negativeCount++;
 			}
-			accumulatedWordList.checkDuped(currentWord->word);
 		}
 
 		auto searchEndTime = high_resolution_clock::now();
@@ -162,10 +162,10 @@ void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, Link
 		totalSearchTime += searchDuration;
 
 		cout << positiveCount << " Positive words found:" << endl;
-		foundPositiveList.displayList();
+		positiveList.printReport();
 
 		cout << negativeCount << " Negative words found:" << endl;
-		foundNegativeList.displayList();
+		negativeList.printReport();
 
 		totalPositiveCount += positiveCount;
 		totalNegativeCount += negativeCount;
@@ -176,13 +176,15 @@ void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, Link
 		analyzeScore(sentimentScore, stoi(currentReviewNode->rating), summary);
 
 		wordList = LinkedList();
+        positiveList.resetFrequencies();
+        negativeList.resetFrequencies();
 	}
 	summary.totalReviews = reviewCount;
 
 	// Timer for sort algorithm
 	auto sortStartTime = high_resolution_clock::now();
 
-	accumulatedWordList.sortByFrequency(); // Assuming this is where sorting happens
+	accumulatedWordList.mergeSortByFrequency(); // Assuming this is where sorting happens
 
 	auto sortEndTime = high_resolution_clock::now();
 	auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
@@ -190,13 +192,13 @@ void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, Link
 	displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
 	cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
 	cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
-	accumulatedWordList.max();
-	accumulatedWordList.min();
+	accumulatedWordList.linearFindMax();
+	accumulatedWordList.linearFindMin();
 	displayFinalSummary(summary);
 }
 
 // AU YIK HOE (quick sort + binary search)
-void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
+static void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
     LinkedList accumulatedWordList;
     int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
     auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
@@ -260,7 +262,7 @@ void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedLi
     // Timer for sort algorithm
     auto sortStartTime = high_resolution_clock::now();
 
-    accumulatedWordList.sortByFrequency(); // Assuming this is where sorting happens
+    accumulatedWordList.mergeSortByFrequency(); // Assuming this is where sorting happens
 
     auto sortEndTime = high_resolution_clock::now();
     auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
@@ -269,8 +271,8 @@ void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedLi
     
     cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
     cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
-    accumulatedWordList.max();
-    accumulatedWordList.min();
+    accumulatedWordList.linearFindMax();
+    accumulatedWordList.linearFindMin();
 
     displayFinalSummary(summary);
 }
@@ -285,7 +287,7 @@ int main() {
 
 	auto startTime = high_resolution_clock::now();
 
-	//processReviewsAlgo1(reviewsList, positiveList, negativeList, summary); // Linked List algorithm 1 (merge + linear)
+	processReviewsAlgo1(reviewsList, positiveList, negativeList, summary); // Linked List algorithm 1 (merge + linear)
 	//processReviewsAlgo2(reviewsList, positiveList, negativeList, summary); // Linled List algorithm 2 (quick + binary)
 
 	auto endTime = high_resolution_clock::now();
