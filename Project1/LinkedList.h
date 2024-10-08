@@ -25,6 +25,10 @@ class LinkedList
 		int size = 0;
 		WordNode* word_head, * word_tail;
 
+		//merge sorge algorithm
+		WordNode* mergeLists(WordNode* left, WordNode* right);
+		WordNode* splitList(WordNode* head);
+
 		// quick sort algorithm
 		WordNode* partition(WordNode* head, WordNode* tail);
 		WordNode* partitionByFrequency(WordNode* head, WordNode* tail);
@@ -48,18 +52,13 @@ class LinkedList
 		void printReport();
 
 		//linear serach
-		LinkedList findMatchingWords(LinkedList& positiveList, LinkedList& negativeList);
-		void linearFindmax();
-		void linearFindmin();
+		bool linearSearch(string word);
+		void linearFindMax();
+		void linearFindMin();
 
 		//merge sort
-		WordNode* mergeLists(WordNode* left, WordNode* right);
-		WordNode* splitList(WordNode* head);
 		WordNode* mergeSort(WordNode* head);
-		
-		//helper
-		bool linearSearch(string word);
-		void sortByFrequency();
+		void mergeSortByFrequency();
 
 		// quick sort
 		void quickSort();
@@ -72,7 +71,6 @@ class LinkedList
 
 		void resetFrequencies();
 		void checkDuped(string word);
-
 
 		Node* getHead();
 		Node* getTail();

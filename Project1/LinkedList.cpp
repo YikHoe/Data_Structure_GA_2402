@@ -1,4 +1,11 @@
-﻿#include <iostream>
+﻿//GeeksforGeeks. (2024, July 31).Search an element in a Linked List(Iterative and Recursive).GeeksforGeeks.
+//      https://www.geeksforgeeks.org/search-an-element-in-a-linked-list-iterative-and-recursive/
+//GeeksforGeeks. (2024b, September 4).Find smallest and largest elements in singly linked list.GeeksforGeeks.
+//      https://www.geeksforgeeks.org/find-smallest-largest-elements-singly-linked-list/
+//Merge Sort a Linked List. (n.d.).Stack Overflow.
+//      https://stackoverflow.com/questions/7685/merge-sort-a-linked-list
+
+#include <iostream>
 #include <chrono>
 #include "LinkedList.h"
 
@@ -7,7 +14,7 @@ using namespace std::chrono;
 Node::Node(string review_string, string rating_given) : review(review_string), rating(rating_given), nextAddress(nullptr) {}
 WordNode::WordNode(string word_string) : word(word_string), frequency(0), nextAddress(nullptr) {}
 
-LinkedList::LinkedList() : head(nullptr),tail(nullptr), word_head(nullptr), word_tail(nullptr) {}
+LinkedList::LinkedList() : head(nullptr), tail(nullptr), word_head(nullptr), word_tail(nullptr) {}
 
 LinkedList::~LinkedList() {
     Node* current = head;
@@ -170,160 +177,144 @@ void LinkedList::printReport() {
     cout << endl << endl << endl;
 }
 
-LinkedList LinkedList::findMatchingWords(LinkedList& positiveList, LinkedList& negativeList) {
-	LinkedList foundedList;
 
-	WordNode* currentWordNode = word_head;  // Start from the head of the word list
-
-	while (currentWordNode != nullptr) {  // Traverse the wordList
-		// Check if the word exists in positiveList or negativeList
-		if (positiveList.linearSearch(currentWordNode->word) || negativeList.linearSearch(currentWordNode->word)) {
-			// If the word is found in either list, insert it into the foundedList
-			foundedList.insertFront(currentWordNode->word);
-		}
-		currentWordNode = currentWordNode->nextAddress;  // Move to the next word
-	}
-
-	return foundedList;  // Return the list containing matching words
+//Linear Search Function adapted from (GeeksforGeeks, 2024)
+bool LinkedList::linearSearch(string word) {
+    WordNode* current = word_head;  // Start at the head of the list
+    while (current != nullptr) {
+        if (current->word == word) {
+            current->frequency++;
+            return true;  // Word found in the list
+        }
+        current = current->nextAddress;
+    }
+    return false;  // Word not found in the list
 }
 
-void LinkedList::linearFindmax() {
-	if (word_tail == nullptr) {
-		return;
-	}
-	cout << "Maximum used word in the reviews : ";
-	int max = word_tail->frequency;
-	WordNode* current = word_tail;
-	while (current != nullptr) {
-		if (current->frequency == max) {
-			cout << current->word << ", ";
-		}
-		else {
-			break;
-		}
-		current = current->nextAddress; 
-	}
-	cout << endl;
+//Find Max by Linear Search adpated from (GeeksforGeeks, 2024)
+void LinkedList::linearFindMax() {
+    if (word_head == nullptr) {
+        return;
+    }
+    int max = word_tail->frequency;
+    WordNode* current = word_head;
 
+    cout << "Maximum used word(s) in the reviews: ";
+    while (current != nullptr) {
+        if (current->frequency == max) {
+            cout << current->word << ", ";
+        }
+        current = current->nextAddress;
+    }
+    cout << endl;
 }
 
-void LinkedList::linearFindmin() {
-	if (word_tail == nullptr) {
-		return;
-	}
-	cout << "Minimum used word in the reviews : ";
-	int min = word_head->frequency;
-	WordNode* current = word_head;
-	while (current != nullptr) {
-		if (current->frequency == min) {
-			cout << current->word << ", ";
-		}
-		else {
-			break;
-		}
-		current = current->nextAddress;
-	}
-	cout << endl;
+//Find Min by Linear Search adpated from (GeeksforGeeks, 2024)
+void LinkedList::linearFindMin() {
+    if (word_head == nullptr) {
+        return;
+    }
+    cout << "Minimum used word in the reviews : ";
+    int min = word_head->frequency;
+    WordNode* current = word_head;
+    while (current != nullptr) {
+        if (current->frequency == min) {
+            cout << current->word << ", ";
+        }
+        else {
+            break;
+        }
+        current = current->nextAddress;
+    }
+    cout << endl;
 }
 
-
-
-bool LinkedList::linearSearch(string word){
-	WordNode* current = word_head;  // Start at the head of the list
-	while (current != nullptr) {
-		if (current->word == word) {
-			return true;  // Word found in the list
-		}
-		current = current->nextAddress;
-	}
-	return false;  // Word not found in the list
-}
-
-
+//Split List Function adpated from (Merge Sort a Linked List, n.d.)
 WordNode* LinkedList::splitList(WordNode* head) {
-	if (head == nullptr || head->nextAddress == nullptr) {
-		return head;
-	}
-	WordNode* slow = head;
-	WordNode* fast = head->nextAddress;
+    if (head == nullptr || head->nextAddress == nullptr) {
+        return head;
+    }
+    WordNode* slow = head;
+    WordNode* fast = head->nextAddress;
 
-	while (fast != nullptr && fast->nextAddress != nullptr) {
-		slow = slow->nextAddress;
-		fast = fast->nextAddress->nextAddress;
-	}
+    while (fast != nullptr && fast->nextAddress != nullptr) {
+        slow = slow->nextAddress;
+        fast = fast->nextAddress->nextAddress;
+    }
 
-	WordNode* middle = slow->nextAddress;
-	slow->nextAddress = nullptr;
+    WordNode* middle = slow->nextAddress;
+    slow->nextAddress = nullptr;
 
-	return middle;
+    return middle;
 }
 
-
-WordNode* LinkedList::mergeSort(WordNode* head) {
-	// Base case: If the list is empty or has only one node
-	if (head == nullptr || head->nextAddress == nullptr) {
-		return head;
-	}
-
-	// Split the list into halves
-	WordNode* middle = splitList(head);
-	WordNode* left = mergeSort(head);
-	WordNode* right = mergeSort(middle);
-
-	// Merge the sorted halves
-	return mergeLists(left, right);
-}
-
+//Merge List Function adapted from (Merge Sort a Linked List, n.d.)
 WordNode* LinkedList::mergeLists(WordNode* left, WordNode* right) {
-	// Create a dummy node to simplify merging
-	WordNode dummy("");
-	WordNode* tail = &dummy;
+    // Create a dummy node to simplify merging
+    WordNode dummy("");
+    WordNode* tail = &dummy;
 
-	while (left != nullptr && right != nullptr) {
-		if (left->frequency < right->frequency) {
-			tail->nextAddress = left;
-			left = left->nextAddress;
-		}
-		else if (left->frequency > right->frequency) {
-			tail->nextAddress = right;
-			right = right->nextAddress;
-		}
-		else {
-			// If frequencies are equal, sort lexicographically
-			if (left->word <= right->word) {
-				tail->nextAddress = left;
-				left = left->nextAddress;
-			}
-			else {
-				tail->nextAddress = right;
-				right = right->nextAddress;
-			}
-		}
-		tail = tail->nextAddress; // Move the tail pointer
-	}
+    while (left != nullptr && right != nullptr) {
+        if (left->frequency < right->frequency) {
+            tail->nextAddress = left;
+            left = left->nextAddress;
+        }
+        else if (left->frequency > right->frequency) {
+            tail->nextAddress = right;
+            right = right->nextAddress;
+        }
+        else {
+            // If frequencies are equal, sort lexicographically
+            if (left->word <= right->word) {
+                tail->nextAddress = left;
+                left = left->nextAddress;
+            }
+            else {
+                tail->nextAddress = right;
+                right = right->nextAddress;
+            }
+        }
+        tail = tail->nextAddress; // Move the tail pointer
+    }
 
-	tail->nextAddress = left ? left : right;
-	return dummy.nextAddress;
+    tail->nextAddress = left ? left : right;
+    return dummy.nextAddress;
+}
 
+//Merge Sort Function adapted from (Merge Sort a Linked List, n.d.)
+WordNode* LinkedList::mergeSort(WordNode* head) {
+    // Base case: If the list is empty or has only one node
+    if (head == nullptr || head->nextAddress == nullptr) {
+        return head;
+    }
+
+    // Split the list into halves
+    WordNode* middle = splitList(head);
+    WordNode* left = mergeSort(head);
+    WordNode* right = mergeSort(middle);
+
+    // Merge the sorted halves
+    return mergeLists(left, right);
 }
 
 
-void LinkedList::sortByFrequency() {
-	// Sort the linked list by frequency
-	word_head = mergeSort(word_head); // Update head after sorting
 
-	// Update the tail pointer if the list is not empty
-	if (word_head == nullptr) {
-		word_tail = nullptr; // List is empty
-	}
-	else {
-		// Find the new tail of the sorted list
-		WordNode* temp = word_head;
-		while (temp->nextAddress != nullptr) {
-			temp = temp->nextAddress;
-		}
-		word_tail = temp; // Update the tail
-	}
+void LinkedList::mergeSortByFrequency() {
+    // Sort the linked list by frequency
+    word_head = mergeSort(word_head); // Update head after sorting
+
+    // Update the tail pointer if the list is not empty
+    if (word_head == nullptr) {
+        word_tail = nullptr; // List is empty
+    }
+    else {
+        // Find the new tail of the sorted list
+        WordNode* temp = word_head;
+        while (temp->nextAddress != nullptr) {
+            temp = temp->nextAddress;
+        }
+        word_tail = temp; // Update the tail
+    }
 }
 // Quick sort
 WordNode* LinkedList::partition(WordNode* head, WordNode* tail) {
@@ -380,7 +371,7 @@ WordNode* LinkedList::partitionByFrequency(WordNode* head, WordNode* tail) {
         }
         current = current->nextAddress;
     }
-    
+
     string word_temp = head->word;
     int freq_temp = head->frequency;
 
@@ -572,7 +563,7 @@ void LinkedList::checkDuped(string word) {
 
     while (current != nullptr) {
         if (current->word == word) {
-            current->frequency += 1;
+            current->frequency++;
             return;
         }
 
@@ -605,7 +596,3 @@ WordNode* LinkedList::getWordHead() {
 WordNode* LinkedList::getWordTail() {
     return word_tail;
 }
-
-
-
-
