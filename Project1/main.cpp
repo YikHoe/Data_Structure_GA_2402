@@ -20,8 +20,6 @@ struct Summary {
     int totalReviews = 0;
 };
 
-
-
 static void tokenize(string review, LinkedList& list) {
     string word = "";
     for (char c : review) {
@@ -132,17 +130,21 @@ static void displayFinalSummary(const Summary& summary) {
 using SearchFunction = bool (LinkedList::*)(string);
 using SortFunction = void (LinkedList::*)();
 
-
-// WONG YI ZUN (merge sort + linear search)
-static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, SortFunction sortFunction) {
-	LinkedList wordList, accumulatedWordList;
+// ***************************************** //
+//                                           //
+// WONG YI ZUN (merge sort & linear search)  //
+//                                           //
+// AU YIK HOE (quick sort & binary search)   //
+//                                           //
+// ***************************************** //
+static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, SortFunction sortFunction) {
+	LinkedList accumulatedWordList;
 	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
 	auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
 
 	for (Node* currentReviewNode = reviewsList.getHead(); currentReviewNode != nullptr; currentReviewNode = currentReviewNode->nextAddress) {
-		LinkedList foundPositiveList, foundNegativeList;
+        LinkedList wordList;
 		int positiveCount = 0, negativeCount = 0;
-		reviewCount++;
 
 		cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl;
 		cout << string(120, '=') << endl;
@@ -186,9 +188,9 @@ static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveLis
 		cout << "Rating given by User =  " << currentReviewNode->rating << endl;
 		analyzeScore(sentimentScore, stoi(currentReviewNode->rating), summary);
 
-		wordList = LinkedList();
         positiveList.resetFrequencies();
         negativeList.resetFrequencies();
+        reviewCount++;
 	}
 	summary.totalReviews = reviewCount;
 
@@ -201,14 +203,13 @@ static void processReviewsAlgo1(LinkedList& reviewsList, LinkedList& positiveLis
 	auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
 
 	displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
-	cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
-	cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
 	accumulatedWordList.jumpFindMax();
 	accumulatedWordList.jumpFindMin();
 	displayFinalSummary(summary);
+    cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
+    cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
 }
 
-// AU YIK HOE (quick sort + binary search)
 static void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
     LinkedList accumulatedWordList;
     int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
@@ -322,10 +323,10 @@ int main() {
         sortFunction = &LinkedList::quickSortByFrequency;
     }
     else if (choice == 2) {
-        cout << "Invalid choice, defaulting to Merge Sort." << endl;
         sortFunction = &LinkedList::mergeSortByFrequency;
     }
     else {
+        cout << "Invalid choice, defaulting to Merge Sort." << endl;
         sortFunction = &LinkedList::mergeSortByFrequency;
     }
 
@@ -333,7 +334,7 @@ int main() {
     auto startTime = high_resolution_clock::now();
 
 
-    processReviewsAlgo1(reviewsList, positiveList, negativeList, summary, searchFunction, sortFunction);
+    processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, sortFunction);
 
 	auto endTime = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(endTime - startTime);

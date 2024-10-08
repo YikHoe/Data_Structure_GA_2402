@@ -89,7 +89,7 @@ void LinkedList::insertBack(string review, string rating) {
 
 void LinkedList::insertBack(string word) {
 	WordNode* newNode = new WordNode(word);
-	if (word_tail == nullptr) { // List is empty
+	if (word_tail == nullptr) {
 		word_head = word_tail = newNode;
 	}
 	else {
@@ -103,12 +103,12 @@ void LinkedList::deleteFront() {
 		return;
 	}
 
-	if (head != nullptr) {
+	if (head != nullptr) { // delete from node linked list
 		Node* current = head;
 		head = head->nextAddress;
 		delete current;
 	}
-	else {
+	else { // delete from word node linked list
 		WordNode* current = word_head;
 		word_head = word_head->nextAddress;
 		delete current;

@@ -24,6 +24,7 @@ class LinkedList
 		Node* head, * tail;
 		int size = 0;
 		WordNode* word_head, * word_tail;
+
 		//jump searge algorithm
 		WordNode* jumpByBlockSize(int blockSize, WordNode* startNode);
 		void jumpList(WordNode*& current, int blockSize, int& frequency, bool findMax);
@@ -55,7 +56,6 @@ class LinkedList
 		void printReport();
 		void displayMinMaxWord(int frequency);
 
-
 		//jump serach
 		bool jumpSearch(string word);
 		void jumpFindMax();
@@ -74,9 +74,11 @@ class LinkedList
 		void binaryFindMax();
 		void binaryFindMin();
 
+		// linked list helper
 		void resetFrequencies();
 		void checkDuped(string word);
 
+		// getter
 		Node* getHead();
 		Node* getTail();
 		WordNode* getWordHead();
