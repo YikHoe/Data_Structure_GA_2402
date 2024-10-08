@@ -1,11 +1,8 @@
-﻿  Array.cpp
-  ArrayMainProgram.cpp
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(85,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(121,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(127,21): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(273,24): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(326,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(332,21): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-  customArrayMap.cpp
-  Generating Code...
+﻿  ArrayMainProgram.cpp
+C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(83,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(117,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(123,21): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(270,24): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(323,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\Project1\ArrayMainProgram.cpp(329,21): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
   Project1.vcxproj -> C:\Users\user\OneDrive - Asia Pacific University\Degree_Level2_Sem2\Data Structure\Assignment_DS_Code\Data_Structure_GA_2402\x64\Debug\Project1.exe

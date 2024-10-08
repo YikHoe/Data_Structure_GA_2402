@@ -204,13 +204,13 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
         bool isPositive = false;
 
         // Use search algorithm to check if word is in positive or negative words list
-        //jumpSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
-        binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        jumpSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        //binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
 
         // Run only if the word is not found in positive
         if (!isPositive) {
-            //jumpSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
-            binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            jumpSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            //binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
         }
     }
 
@@ -619,7 +619,7 @@ int main()
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
     auto stopProgram = high_resolution_clock::now();
     auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
-    cout << "Total Search time:" << totalSearchDuration.count() << "micro seconds" << endl;
+    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
     return 0;
 }
