@@ -452,7 +452,6 @@ int partition(customArrayMap<string, int>& arr, int low, int high) {
     int i = (low - 1); // Index of smaller element
 
     for (int j = low; j < high; j++) {
-        //if (arr.getByIndex(j).getValue() < pivot.second) { // Compare based on frequency
 		if (arr.getByIndex(j).getValue() < pivot.getValue()) { // Compare based on frequency
             i++; // Increment index of smaller element
             swap(arr.getByIndex(i), arr.getByIndex(j)); // Swap
