@@ -36,9 +36,9 @@ class LinkedList
 
 		// quick sort algorithm
 		WordNode* partition(WordNode* head, WordNode* tail);
-		WordNode* partitionByFrequency(WordNode* head, WordNode* tail);
+		//WordNode* partitionByFrequency(WordNode* head, WordNode* tail);
 		void sortRecur(WordNode* head, WordNode* tail);
-		void sortRecurByFrequency(WordNode* head, WordNode* tail);
+		//void sortRecurByFrequency(WordNode* head, WordNode* tail);
 
 		// binary search alogorithm
 		WordNode* getMiddle(WordNode* head, WordNode* tail);
@@ -53,6 +53,7 @@ class LinkedList
 		void insertBack(string word);
 		void deleteFront();
 		void deleteBack();
+		Node* getReview(int id);
 		void displayList();
 
 		//jump serach
@@ -67,7 +68,7 @@ class LinkedList
 
 		// quick sort
 		void quickSort();
-		void quickSortByFrequency();
+		//void quickSortByFrequency();
 
 		// binary search
 		bool binarySearch(string target);

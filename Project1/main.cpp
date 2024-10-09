@@ -209,13 +209,69 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
     else {
         accumulatedWordList.binaryFindMax();
         accumulatedWordList.binaryFindMin();
-        cout << "binary search used" << endl;
     }
 
 	displayFinalSummary(summary);
     cout << fixed << setprecision(4);
     cout << "Time taken for all search: " << searchTimer.totalTime().count() / 1'000'000.0 << " seconds." << endl;
     cout << "Time taken for sorting: " << sortTimer.getInterval().count() / 1'000'000.0 << " seconds." << endl;
+}
+
+// retrieve review
+static void analyzeReview(Node* review, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, bool searchType, SortFunction sortFunction) {
+    LinkedList accumulatedWordList;
+    int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
+    LinkedList wordList;
+    int positiveCount = 0, negativeCount = 0;
+
+    cout << string(120, '=') << endl;
+    cout << "Review: " << review->review << endl << endl;
+
+    tokenize(review->review, wordList);
+    (wordList.*sortFunction)();
+
+    for (WordNode* currentWord = wordList.getWordHead(); currentWord != nullptr; currentWord = currentWord->nextAddress) {
+        if ((positiveList.*searchFunction)(currentWord->word)) {
+            accumulatedWordList.checkDuped(currentWord->word);
+            totalPositiveCount++;
+            positiveCount++;
+        }
+        else if ((negativeList.*searchFunction)(currentWord->word)) {
+            accumulatedWordList.checkDuped(currentWord->word);
+            totalNegativeCount++;
+            negativeCount++;
+        }
+    }
+    cout << positiveCount << " Positive words found:" << endl;
+    positiveList.displayList();
+
+    cout << negativeCount << " Negative words found:" << endl;
+    negativeList.displayList();
+
+    int sentimentScore = calculateSentimentScore(positiveCount, negativeCount);
+    cout << "Sentiment Score (1-5) = " << sentimentScore << endl;
+    cout << "Rating given by User =  " << review->rating << endl;
+    analyzeScore(sentimentScore, stoi(review->rating), summary);
+
+    positiveList.resetFrequencies();
+    negativeList.resetFrequencies();
+
+    cout << string(120, '=') << endl;
+
+    summary.totalReviews = reviewCount;
+
+    (accumulatedWordList.*sortFunction)();
+
+    displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
+
+    if (searchType) {
+        accumulatedWordList.jumpFindMax();
+        accumulatedWordList.jumpFindMin();
+    }
+    else {
+        accumulatedWordList.binaryFindMax();
+        accumulatedWordList.binaryFindMin();
+    }
 }
 
 int main() {
@@ -250,12 +306,14 @@ int main() {
         searchFlag = 1;
     }
 
+    cout << endl;
+
     // Sorting alogorithm selection
     cout << "Choose Sort Algorithm:\n1. Quick Sort\n2. Merge Sort\n";
     cin >> sortChoice;
 
     if (sortChoice == 1) {
-        sortFunction = &LinkedList::quickSortByFrequency;
+        sortFunction = &LinkedList::quickSort;
     }
     else if (choice == 2) {
         sortFunction = &LinkedList::mergeSortByFrequency;
@@ -265,33 +323,84 @@ int main() {
         sortFunction = &LinkedList::mergeSortByFrequency;
     }
 
-    // Analyze all reviews
-    Timer runTimer, searchTimer, sortTimer;
-    runTimer.start();
+    cout << endl;
 
-    processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction, searchTimer, sortTimer);
+    int operationChoice;
 
-    runTimer.stop();
+    cout << "Please choose an operation below: " << endl << endl;
+    cout << "1. Analyze All Reviews" << endl <<
+        "2. Retrieve review" << endl <<
+        "3. Analyze new review" << endl <<
+        "4. Exit" << endl << endl;
+    cin >> operationChoice;
 
-    cout << "Time taken: " << runTimer.totalTime().count() / 1'000'000 / 60 << " minutes and "
-        << (runTimer.totalTime().count() / 1'000'000) % 60 << " seconds." << endl;
-
-    /*cout << endl << endl;
-    cout << string(100, '*') << endl << endl;
-    cout << "DETAIL ANALYTICS" << endl << endl;
-    cout << string(100, '*') << endl;
-
-    int selection;
-    cout << "Select an option: " << endl;
-    cout << "1. Detailed Analysis of Sorting Algorithm" << endl << "2. Detailed Analysis of Searching Algorithm" << endl << "3. Exit program" << endl << endl << "> ";
-    cin >> selection;
-
-    while (selection != 1 && selection != 2 && selection != 3) {
+    while (operationChoice != 1 && operationChoice != 2 && operationChoice != 3 && operationChoice != 4) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Please enter the given option numbers" << endl << "> ";
-        cin >> selection;
-    }*/
+        cin >> operationChoice;
+    }
+
+    Timer runTimer, searchTimer, sortTimer;
+    Node* node;
+    string review;
+    Summary sum;
+    switch (operationChoice)
+    {
+    case 1:
+        // Analyze all reviews
+        runTimer.start();
+
+        processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction, searchTimer, sortTimer);
+
+        runTimer.stop();
+
+        cout << "Time taken: " << runTimer.totalTime().count() / 1'000'000 / 60 << " minutes and "
+            << (runTimer.totalTime().count() / 1'000'000) % 60 << " seconds." << endl;
+        break;
+        
+    case 2:
+        // Retreive specific review
+        int id;
+        cout << "Enter review ID >> ";
+        cin >> id;
+
+        node = reviewsList.getReview(id);
+
+        if (node != nullptr) {
+            Summary sum;
+            analyzeReview(node, positiveList, negativeList, sum, searchFunction, searchFlag, sortFunction);
+        }
+        else {
+            cout << "Review not found!" << endl;
+        }
+        break;
+
+    case 3:
+        int rating;
+        cout << "Enter review: ";
+        cin.ignore();
+        getline(cin, review);
+        cout << "Enter rating: ";
+        cin >> rating;
+
+        while (cin.fail() || rating < 1 || rating > 5 || review.length() < 1) {
+            cout << "Please enter valid review and rating." << endl;
+            cout << "Enter review: ";
+            cin.ignore();
+            getline(cin, review);
+            cout << "Enter rating: ";
+            cin >> rating;
+        }
+
+        node = new Node(review, to_string(rating));
+        analyzeReview(node, positiveList, negativeList, sum, searchFunction, searchFlag, sortFunction);
+        break;
+
+    default:
+        cout << string(20, '=') << "PROGRAM TERMINATED" << string(20, '=') << endl;
+        break;
+    }
 
 	return 0;
 }

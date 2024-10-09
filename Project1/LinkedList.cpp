@@ -44,6 +44,7 @@ void LinkedList::insertFront(string review, string rating) {
 	}
 
 	head = newNode;
+	size++;
 }
 
 void LinkedList::insertFront(string word) {
@@ -55,6 +56,7 @@ void LinkedList::insertFront(string word) {
 	}
 
 	word_head = newNode;
+	size++;
 }
 
 void LinkedList::insertBack(string review, string rating) {
@@ -66,6 +68,7 @@ void LinkedList::insertBack(string review, string rating) {
 	}
 
 	current->nextAddress = newNode;
+	size++;
 }
 
 void LinkedList::insertBack(string word) {
@@ -77,6 +80,7 @@ void LinkedList::insertBack(string word) {
 		word_tail->nextAddress = newNode;
 		word_tail = newNode;
 	}
+	size++;
 }
 
 void LinkedList::deleteFront() {
@@ -139,6 +143,21 @@ void  LinkedList::deleteBack() {
 	}
 
 
+}
+
+Node* LinkedList::getReview(int id) {
+	if (size == 0) {
+		return nullptr;
+	}
+	
+	Node* current = head;
+	int sizeCnt = 1;
+	while (sizeCnt != id) {
+		current = current->nextAddress;
+		sizeCnt++;
+	}
+
+	return current;
 }
 
 void LinkedList::displayList() {
@@ -345,36 +364,6 @@ void LinkedList::mergeSortByFrequency() {
 }
 // Quick sort
 WordNode* LinkedList::partition(WordNode* head, WordNode* tail) {
-	// Select the first node as the pivot node
-	WordNode* pivot = head;
-
-	// 'pre' and 'curr' are used to shift all 
-	 // smaller nodes' data to the left side of the pivot node
-	WordNode* previous = head;
-	WordNode* current = head;
-
-	// Traverse the list until you reach the node after the tail
-	while (current != tail->nextAddress) {
-
-		if (current->word < pivot->word) {
-			previous = previous->nextAddress;
-			string temp = current->word;
-			current->word = previous->word;
-			previous->word = temp;
-		}
-
-		// Move current to the next node
-		current = current->nextAddress;
-	}
-
-	string temp = pivot->word;
-	pivot->word = previous->word;
-	previous->word = temp;
-
-	return previous; // new pivot
-}
-
-WordNode* LinkedList::partitionByFrequency(WordNode* head, WordNode* tail) {
 	if (head == tail) {
 		return head;
 	}
@@ -385,6 +374,8 @@ WordNode* LinkedList::partitionByFrequency(WordNode* head, WordNode* tail) {
 	WordNode* current = head->nextAddress;
 
 	while (current != tail->nextAddress) {
+		// First check frequency of word, sort by frequency
+		// if same frequency then sort by alphabetical order
 		if (current->frequency < pivot_freq || (current->frequency == pivot_freq && current->word < pivot_word)) {
 			pre = pre->nextAddress;
 
@@ -399,6 +390,7 @@ WordNode* LinkedList::partitionByFrequency(WordNode* head, WordNode* tail) {
 		current = current->nextAddress;
 	}
 
+	// Swapping nodes
 	string word_temp = head->word;
 	int freq_temp = head->frequency;
 
@@ -426,34 +418,8 @@ void LinkedList::sortRecur(WordNode* head, WordNode* tail) {
 	}
 }
 
-void LinkedList::sortRecurByFrequency(WordNode* head, WordNode* tail) {
-	if (head == nullptr || head == tail) {
-		return;
-	}
-
-	WordNode* pivot = partitionByFrequency(head, tail);
-
-	// Recursively sort the left partition
-	if (pivot != head) {
-		WordNode* temp = head;
-		while (temp->nextAddress != pivot) {
-			temp = temp->nextAddress;
-		}
-		sortRecurByFrequency(head, temp);
-	}
-
-	// Recursively sort the right partition
-	if (pivot->nextAddress != nullptr && pivot->nextAddress != tail->nextAddress) {
-		sortRecurByFrequency(pivot->nextAddress, tail);
-	}
-}
-
 void LinkedList::quickSort() {
 	sortRecur(word_head, word_tail);
-}
-
-void LinkedList::quickSortByFrequency() {
-	sortRecurByFrequency(word_head, word_tail);
 }
 
 // Binary search
@@ -623,18 +589,6 @@ WordNode* LinkedList::getWordTail() {
 }
 
 int LinkedList::getSize() {
-	int size = 0;
-	Node* current = head;
-	while (current != nullptr) {
-		size++;
-		current = current->nextAddress;
-	}
-
-	WordNode* currentWord = word_head;
-	while (currentWord != nullptr) {
-		size++;
-		currentWord = currentWord->nextAddress;
- 	}
 	return size;
 }
 
