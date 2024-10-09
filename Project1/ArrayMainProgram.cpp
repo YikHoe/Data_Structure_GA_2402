@@ -89,28 +89,6 @@ void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hot
     }
 }
 
-////linear search to count word
-//void linearSearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, bool& isPositive, customArrayMap<string, int>& wordFreq) {
-//    //Loop the whole words array
-//    for (int i = 0; i < words.getSize(); i++) {
-//        // If the word is matching the correct word
-//        if (word == words.get(i)){
-//            //Add the word count and insert the word into foundWords array
-//            wordCount++;
-//            foundWords.insert(word);
-//            if(wordFreq.containsKey(word)){
-//                //add freq in wordFreq array        
-//                wordFreq.addFreqByKey(word);
-//            } else{
-//				wordFreq.insert(word, 1);
-//            }
-//            // Set positive status to true to avoid repeat searching
-//            isPositive = true;
-//            break;
-//        }
-//    }
-//}
-
 void jumpSearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, 
     bool& isPositive, customArrayMap<string, int>& wordFreq) {
     int n = words.getSize();  // Get size of the array
@@ -307,16 +285,6 @@ void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>
         cout << endl;
     }
 }
-
-//void linearSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Array<string>& words) {
-//
-//    for (int i = 0; i < wordFrequency.getSize(); i++) {
-//        int wordFreq = wordFrequency.getByIndex(i).getValue();
-//        if (wordFreq == targetFreq) {
-//            words.insert(wordFrequency.getByIndex(i).getKey());
-//        }
-//    }
-//}
 
 void jumpSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Array<string>& words) {
     int n = wordFrequency.getSize();  // Get size of the map
@@ -578,8 +546,19 @@ void displaySummary(Array<int>& reviewRate, float& matchEvaluation, float& unmat
     cout << "Overall Evaluation Accuracy \t: " << evaluationAccuracy << "%" << endl;
 }
 
-int main()
-{
+// Function to display the menu
+void displayMenu() {
+    cout << "Please choose an option to analyze the hotel review using array with different sorting and searching algorithm: " << endl;
+    cout << "1. Merge Sort + Binary Search" << endl;
+    cout << "2. Merge Sort + Jump Search" << endl;
+    cout << "3. Quick Sort + Binary Search" << endl;
+    cout << "4. Quick Sort + Jump Search" << endl;
+    cout << "5. Exit" << endl;
+    cout << "Your choice: ";
+}
+
+// Function declarations for options 1-4
+void mergeSortAndBinarySearch() {
     Array<int> reviewRate(3, 0);
     Array<string> positiveWords, negativeWords;
     customArrayMap<string, int> hotelReviews;
@@ -590,8 +569,6 @@ int main()
     auto startProgram = high_resolution_clock::now(); //start the timer
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
-    //NOTE: You can adjust the number of reviews to be read in the readReviewsFromCSV function at the while loop line
-    //It was set to 300 by default
     readReviewsFromCSV("tripadvisor_hotel_reviews.csv", hotelReviews);
 
     float matchEvaluation = 0;
@@ -604,16 +581,14 @@ int main()
 
     auto startSort = high_resolution_clock::now(); //start the timer
 
-    //Choose sorting algorithm by comment/uncomment the line below that has the merge/quick sort function
     mergeSort(wordFrequency, 0, wordFrequency.getSize() - 1);
-    //quickSortTailRecursive(wordFrequency, 0, wordFrequency.getSize() - 1);
 
     auto stopSort = high_resolution_clock::now(); //stop the timer
 
     displaySortedFrequencies(wordFrequency);
     //calculate the time used
     auto duration = duration_cast<microseconds>(stopSort - startSort);
-    cout << "Time execution for sorting: " << duration.count() << " microseconds. " << endl;
+    cout << "Time execution for sorting using merge sort: " << duration.count() << " microseconds. " << endl;
     searchAlgo(wordFrequency, minWords, maxWords);
     displayMinMaxWord(minWords, maxWords);
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
@@ -621,5 +596,166 @@ int main()
     auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
     cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
+}
+
+void mergeSortAndJumpSearch() {
+    Array<int> reviewRate(3, 0);
+    Array<string> positiveWords, negativeWords;
+    customArrayMap<string, int> hotelReviews;
+    customArrayMap<string, int> wordFrequency;
+    Array<string> minWords, maxWords;
+    // Initialize totalSearchDuration as 0 microseconds
+    microseconds totalSearchDuration = microseconds(0);
+    auto startProgram = high_resolution_clock::now(); //start the timer
+    readWordsFromFile("positive-words.txt", positiveWords);
+    readWordsFromFile("negative-words.txt", negativeWords);
+    readReviewsFromCSV("tripadvisor_hotel_reviews.csv", hotelReviews);
+
+    float matchEvaluation = 0;
+    float unmatchEvaluation = 0;
+    int totalPositiveWords = 0;  // Initialize variables to store totals
+    int totalNegativeWords = 0;
+    summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
+    displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
+
+    auto startSort = high_resolution_clock::now(); //start the timer
+
+    mergeSort(wordFrequency, 0, wordFrequency.getSize() - 1);
+
+    auto stopSort = high_resolution_clock::now(); //stop the timer
+
+    displaySortedFrequencies(wordFrequency);
+    //calculate the time used
+    auto duration = duration_cast<microseconds>(stopSort - startSort);
+    cout << "Time execution for sorting using merge sort: " << duration.count() << " microseconds. " << endl;
+    searchAlgo(wordFrequency, minWords, maxWords);
+    displayMinMaxWord(minWords, maxWords);
+    displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
+    auto stopProgram = high_resolution_clock::now();
+    auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
+    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
+    cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
+}
+
+void quickSortAndBinarySearch() {
+    Array<int> reviewRate(3, 0);
+    Array<string> positiveWords, negativeWords;
+    customArrayMap<string, int> hotelReviews;
+    customArrayMap<string, int> wordFrequency;
+    Array<string> minWords, maxWords;
+    // Initialize totalSearchDuration as 0 microseconds
+    microseconds totalSearchDuration = microseconds(0);
+    auto startProgram = high_resolution_clock::now(); //start the timer
+    readWordsFromFile("positive-words.txt", positiveWords);
+    readWordsFromFile("negative-words.txt", negativeWords);
+    readReviewsFromCSV("tripadvisor_hotel_reviews.csv", hotelReviews);
+
+    float matchEvaluation = 0;
+    float unmatchEvaluation = 0;
+    int totalPositiveWords = 0;  // Initialize variables to store totals
+    int totalNegativeWords = 0;
+    summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
+    displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
+
+    auto startSort = high_resolution_clock::now(); //start the timer
+
+    quickSortTailRecursive(wordFrequency, 0, wordFrequency.getSize() - 1);
+
+    auto stopSort = high_resolution_clock::now(); //stop the timer
+
+    displaySortedFrequencies(wordFrequency);
+    //calculate the time used
+    auto duration = duration_cast<microseconds>(stopSort - startSort);
+    cout << "Time execution for sorting using quick sort: " << duration.count() << " microseconds. " << endl;
+    searchAlgo(wordFrequency, minWords, maxWords);
+    displayMinMaxWord(minWords, maxWords);
+    displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
+    auto stopProgram = high_resolution_clock::now();
+    auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
+    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
+    cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
+}
+
+void quickSortAndJumpSearch() {
+    Array<int> reviewRate(3, 0);
+    Array<string> positiveWords, negativeWords;
+    customArrayMap<string, int> hotelReviews;
+    customArrayMap<string, int> wordFrequency;
+    Array<string> minWords, maxWords;
+    // Initialize totalSearchDuration as 0 microseconds
+    microseconds totalSearchDuration = microseconds(0);
+    auto startProgram = high_resolution_clock::now(); //start the timer
+    readWordsFromFile("positive-words.txt", positiveWords);
+    readWordsFromFile("negative-words.txt", negativeWords);
+    readReviewsFromCSV("tripadvisor_hotel_reviews.csv", hotelReviews);
+
+    float matchEvaluation = 0;
+    float unmatchEvaluation = 0;
+    int totalPositiveWords = 0;  // Initialize variables to store totals
+    int totalNegativeWords = 0;
+    summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
+    displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
+
+    auto startSort = high_resolution_clock::now(); //start the timer
+
+    quickSortTailRecursive(wordFrequency, 0, wordFrequency.getSize() - 1);
+
+    auto stopSort = high_resolution_clock::now(); //stop the timer
+
+    displaySortedFrequencies(wordFrequency);
+    //calculate the time used
+    auto duration = duration_cast<microseconds>(stopSort - startSort);
+    cout << "Time execution for sorting using quick sort: " << duration.count() << " microseconds. " << endl;
+    searchAlgo(wordFrequency, minWords, maxWords);
+    displayMinMaxWord(minWords, maxWords);
+    displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
+    auto stopProgram = high_resolution_clock::now();
+    auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
+    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
+    cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
+}
+
+int main()
+{
+    int choice;
+    do {
+        displayMenu();  // Show the menu
+        cin >> choice;  // Get the user's choice
+
+        // Validate input
+        if (cin.fail()) {
+            cin.clear(); // clear input buffer to restore cin to a usable state
+            cin.ignore(INT_MAX, '\n'); // ignore last input
+            cout << "Invalid input! Please enter a number between 1 and 5." << endl << endl;
+            continue;
+        }
+
+        // Switch case to handle user's choice
+        switch (choice) {
+        case 1:
+            mergeSortAndBinarySearch();
+            break;
+        case 2:
+            mergeSortAndJumpSearch();
+            break;
+        case 3:
+            quickSortAndBinarySearch();
+            break;
+        case 4:
+            quickSortAndJumpSearch();
+            break;
+        case 5:
+            cout << "Exiting program..." << endl;
+            break;
+        default:
+            cout << "Invalid choice! Please choose between 1 and 5." << endl;
+        }
+
+        cout << endl; // Add some spacing before showing the menu again
+
+    } while (choice != 5); // Exit the loop when the user selects option 5
     return 0;
 }
