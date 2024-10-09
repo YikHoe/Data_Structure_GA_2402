@@ -11,6 +11,9 @@
 // BEKOAIL, P. F. (2019, November 13). Binary search a left/right most element when there are duplicates. Stack Overflow. 
 //      https://stackoverflow.com/a/58838379
 
+// Jump Search Algorithm | Studytonight. (n.d.).
+    https://www.studytonight.com/data-structures/jump-search-algorithm
+
 #include <iostream>
 #include "Array.hpp"
 #include "customArrayMap.hpp"
@@ -89,6 +92,7 @@ void readReviewsFromCSV(const string& filename, customArrayMap<string, int>& hot
     }
 }
 
+//Adapted from (Jump Search Algorithm | Studytonight, n.d.)
 void jumpSearchForWords(Array<string>& words, string& word, int& wordCount, Array<string>& foundWords, 
     bool& isPositive, customArrayMap<string, int>& wordFreq) {
     int n = words.getSize();  // Get size of the array
@@ -294,6 +298,7 @@ void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>
     }
 }
 
+//Jump search for word frequency, adapted from (Jump Search Algorithm | Studytonight, n.d.)
 void jumpSearch(customArrayMap<string, int>& wordFrequency, int& targetFreq, Array<string>& words) {
     int n = wordFrequency.getSize();  // Get size of the map
     int step = sqrt(n);               // Block size for jumping (√n)
@@ -373,9 +378,6 @@ void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWo
         
     //Start timing
     auto searchStart = high_resolution_clock::now(); 
-
-
-
     //Jump Search for Max Words
     if (jSearch) {
         jumpSearch(wordFrequency, maxFreq, maxWords);
