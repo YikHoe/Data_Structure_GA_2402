@@ -162,7 +162,8 @@ void binarySearchForWords(Array<string>& words, string& word, int& wordCount, Ar
 
 // Count the positive and negative word for each review
 void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords,
-    int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords, int& i, customArrayMap<string, int>& wordFreq, microseconds& totalSearchDuration) {
+    int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords, int& i, 
+    customArrayMap<string, int>& wordFreq, microseconds& totalSearchDuration, bool& jSearch) {
 
     // Reset the positive and negative word count for each review
     positiveCount = 0;
@@ -181,14 +182,21 @@ void countPositiveNegativeWords(const string& review, Array<string>& positiveWor
 
         bool isPositive = false;
 
-        // Use search algorithm to check if word is in positive or negative words list
-        jumpSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
-        //binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        if (jSearch) {
+            jumpSearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        }
+        else {
+            binarySearchForWords(positiveWords, word, positiveCount, foundPositiveWords, isPositive, wordFreq);
+        }
 
         // Run only if the word is not found in positive
         if (!isPositive) {
-            jumpSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
-            //binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            if (jSearch) {
+                jumpSearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            }
+            else {
+                binarySearchForWords(negativeWords, word, negativeCount, foundNegativeWords, isPositive, wordFreq);
+            }
         }
     }
 
@@ -215,7 +223,7 @@ float calculateSentimentScore(int positiveCount, int negativeCount) {
 // Display sentiment summary
 void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>& positiveWords, Array<string>& negativeWords,
     int& totalPositiveWords, int& totalNegativeWords, Array<int>& reviewRate, float& matchEvaluation, float& unmatchEvaluation, customArrayMap<string, int>& wordFreq,
-    microseconds& totalSearchDuration)
+    microseconds& totalSearchDuration, bool& jSearch)
 {
     for (int i = 0; i < hotelReviews.getSize(); i++) {
         string review = hotelReviews.getByIndex(i).getKey();
@@ -224,7 +232,7 @@ void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>
         Array<string> foundPositiveWords;
         Array<string> foundNegativeWords;
         int positiveCount = 0, negativeCount = 0;
-        countPositiveNegativeWords(review, positiveWords, negativeWords, positiveCount, negativeCount, foundPositiveWords, foundNegativeWords, i, wordFreq, totalSearchDuration);
+        countPositiveNegativeWords(review, positiveWords, negativeWords, positiveCount, negativeCount, foundPositiveWords, foundNegativeWords, i, wordFreq, totalSearchDuration, jSearch);
         //Update total counts
         totalPositiveWords += positiveCount;
         totalNegativeWords += negativeCount;
@@ -342,11 +350,12 @@ void binarySearch(customArrayMap<string, int>& wordFrequency, int low, int high,
 }
 
 // Search Algorithm for Maximum and Minimum word
-void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWords, Array<string>& maxWords) {
+void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWords, Array<string>& maxWords, bool& jSearch) {
     int lowInd = 0;
     int highInd = wordFrequency.getSize() - 1;
     int maxFreq = INT_MIN;
     int minFreq = INT_MAX;
+    string searchUsed;
     Array<bool> visited(wordFrequency.getSize(), false);
 
     //get maxFreq and minFreq
@@ -365,29 +374,35 @@ void searchAlgo(customArrayMap<string, int>& wordFrequency, Array<string>& minWo
     //Start timing
     auto searchStart = high_resolution_clock::now(); 
 
-    //Binary Search for Max Words
-    //binarySearch(wordFrequency, lowInd, highInd, maxFreq, visited, maxWords);
 
-    //reset visited array ind for Binary search
-    //for (int i = 0; i < visited.getSize(); i++) {
-    //    visited.update(i, false);
-    //}
-
-    //Binary Search for Min Words
-    //binarySearch(wordFrequency, 0, highInd, minFreq, visited, minWords);
 
     //Jump Search for Max Words
-    jumpSearch(wordFrequency, maxFreq, maxWords);
+    if (jSearch) {
+        jumpSearch(wordFrequency, maxFreq, maxWords);
 
-    //Jump Search for Min Words
-    jumpSearch(wordFrequency, minFreq, minWords);
+        //Jump Search for Min Words
+        jumpSearch(wordFrequency, minFreq, minWords);
+        searchUsed = "Jump Search";
+    }
+    else {
+        //Binary Search for Max Words
+        binarySearch(wordFrequency, lowInd, highInd, maxFreq, visited, maxWords);
 
+        //reset visited array ind for Binary search
+        for (int i = 0; i < visited.getSize(); i++) {
+            visited.update(i, false);
+        }
+
+        //Binary Search for Min Words
+        binarySearch(wordFrequency, 0, highInd, minFreq, visited, minWords);
+        searchUsed = "Binary Search";
+    }
     //Stop timing
     auto searchStop = high_resolution_clock::now(); 
 
     //Calculate Search Time
     auto searchDuration = duration_cast<microseconds>(searchStop - searchStart);
-    cout << "Search Execution time for Maximum and Minimum Word : " << searchDuration.count() << " microseconds" << endl;
+    cout << searchUsed << " Execution time for Maximum and Minimum Word : " << searchDuration.count() << " microseconds" << endl;
 }
 
 void displayMinMaxWord(Array<string>& minWords, Array<string>& maxWords) {
@@ -564,6 +579,7 @@ void mergeSortAndBinarySearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
+    bool jSearch = false;
     // Initialize totalSearchDuration as 0 microseconds
     microseconds totalSearchDuration = microseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
@@ -576,7 +592,7 @@ void mergeSortAndBinarySearch() {
     int totalPositiveWords = 0;  // Initialize variables to store totals
     int totalNegativeWords = 0;
     summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
-        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration, jSearch);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
 
     auto startSort = high_resolution_clock::now(); //start the timer
@@ -589,12 +605,18 @@ void mergeSortAndBinarySearch() {
     //calculate the time used
     auto duration = duration_cast<microseconds>(stopSort - startSort);
     cout << "Time execution for sorting using merge sort: " << duration.count() << " microseconds. " << endl;
-    searchAlgo(wordFrequency, minWords, maxWords);
+    searchAlgo(wordFrequency, minWords, maxWords, jSearch);
     displayMinMaxWord(minWords, maxWords);
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
     auto stopProgram = high_resolution_clock::now();
     auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
-    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
+    if (jSearch){ 
+        cout << "Total Search time using Jump Search:" << totalSearchDuration.count() << "milli seconds" << endl; 
+    }
+    else{ 
+        cout << "Total Search time using Binary Search:" << totalSearchDuration.count() << "milli seconds" << endl; 
+    }
+    
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
 }
 
@@ -604,6 +626,7 @@ void mergeSortAndJumpSearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
+    bool jSearch = true;
     // Initialize totalSearchDuration as 0 microseconds
     microseconds totalSearchDuration = microseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
@@ -616,7 +639,7 @@ void mergeSortAndJumpSearch() {
     int totalPositiveWords = 0;  // Initialize variables to store totals
     int totalNegativeWords = 0;
     summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
-        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration, jSearch);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
 
     auto startSort = high_resolution_clock::now(); //start the timer
@@ -629,12 +652,17 @@ void mergeSortAndJumpSearch() {
     //calculate the time used
     auto duration = duration_cast<microseconds>(stopSort - startSort);
     cout << "Time execution for sorting using merge sort: " << duration.count() << " microseconds. " << endl;
-    searchAlgo(wordFrequency, minWords, maxWords);
+    searchAlgo(wordFrequency, minWords, maxWords, jSearch);
     displayMinMaxWord(minWords, maxWords);
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
     auto stopProgram = high_resolution_clock::now();
     auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
-    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
+    if (jSearch) {
+        cout << "Total Search time using Jump Search:" << totalSearchDuration.count() << "milli seconds" << endl;
+    }
+    else {
+        cout << "Total Search time using Binary Search:" << totalSearchDuration.count() << "milli seconds" << endl;
+    }
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
 }
 
@@ -644,6 +672,7 @@ void quickSortAndBinarySearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
+    bool jSearch = false;
     // Initialize totalSearchDuration as 0 microseconds
     microseconds totalSearchDuration = microseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
@@ -656,7 +685,7 @@ void quickSortAndBinarySearch() {
     int totalPositiveWords = 0;  // Initialize variables to store totals
     int totalNegativeWords = 0;
     summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
-        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration, jSearch);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
 
     auto startSort = high_resolution_clock::now(); //start the timer
@@ -669,12 +698,17 @@ void quickSortAndBinarySearch() {
     //calculate the time used
     auto duration = duration_cast<microseconds>(stopSort - startSort);
     cout << "Time execution for sorting using quick sort: " << duration.count() << " microseconds. " << endl;
-    searchAlgo(wordFrequency, minWords, maxWords);
+    searchAlgo(wordFrequency, minWords, maxWords, jSearch);
     displayMinMaxWord(minWords, maxWords);
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
     auto stopProgram = high_resolution_clock::now();
     auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
-    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
+    if (jSearch) {
+        cout << "Total Search time using Jump Search:" << totalSearchDuration.count() << "milli seconds" << endl;
+    }
+    else {
+        cout << "Total Search time using Binary Search:" << totalSearchDuration.count() << "milli seconds" << endl;
+    }
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
 }
 
@@ -684,6 +718,7 @@ void quickSortAndJumpSearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
+    bool jSearch = true;
     // Initialize totalSearchDuration as 0 microseconds
     microseconds totalSearchDuration = microseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
@@ -696,7 +731,7 @@ void quickSortAndJumpSearch() {
     int totalPositiveWords = 0;  // Initialize variables to store totals
     int totalNegativeWords = 0;
     summarizeSentiment(hotelReviews, positiveWords, negativeWords, totalPositiveWords, totalNegativeWords, reviewRate,
-        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration);
+        matchEvaluation, unmatchEvaluation, wordFrequency, totalSearchDuration, jSearch);
     displayFrequencies(hotelReviews.getSize(), totalPositiveWords, totalNegativeWords);
 
     auto startSort = high_resolution_clock::now(); //start the timer
@@ -709,12 +744,17 @@ void quickSortAndJumpSearch() {
     //calculate the time used
     auto duration = duration_cast<microseconds>(stopSort - startSort);
     cout << "Time execution for sorting using quick sort: " << duration.count() << " microseconds. " << endl;
-    searchAlgo(wordFrequency, minWords, maxWords);
+    searchAlgo(wordFrequency, minWords, maxWords, jSearch);
     displayMinMaxWord(minWords, maxWords);
     displaySummary(reviewRate, matchEvaluation, unmatchEvaluation);
     auto stopProgram = high_resolution_clock::now();
     auto programDuration = duration_cast<seconds>(stopProgram - startProgram);
-    cout << "Total Search time:" << totalSearchDuration.count() << "milli seconds" << endl;
+    if (jSearch) {
+        cout << "Total Search time using Jump Search:" << totalSearchDuration.count() << "milli seconds" << endl;
+    }
+    else {
+        cout << "Total Search time using Binary Search:" << totalSearchDuration.count() << "milli seconds" << endl;
+    }
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
 }
 

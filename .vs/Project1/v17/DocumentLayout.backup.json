@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,6 +46,19 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ArrayMainProgram.cpp",
+              "DocumentMoniker": "C:\\Users\\user\\OneDrive - Asia Pacific University\\Degree_Level2_Sem2\\Data Structure\\Assignment_DS_Code\\Data_Structure_GA_2402\\Project1\\ArrayMainProgram.cpp",
+              "RelativeDocumentMoniker": "Project1\\ArrayMainProgram.cpp",
+              "ToolTip": "C:\\Users\\user\\OneDrive - Asia Pacific University\\Degree_Level2_Sem2\\Data Structure\\Assignment_DS_Code\\Data_Structure_GA_2402\\Project1\\ArrayMainProgram.cpp",
+              "RelativeToolTip": "Project1\\ArrayMainProgram.cpp",
+              "ViewState": "AgIAAKoAAAAAAAAAAAAEwL8AAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-08T11:39:54.32Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Array.cpp",
               "DocumentMoniker": "C:\\Users\\user\\OneDrive - Asia Pacific University\\Degree_Level2_Sem2\\Data Structure\\Assignment_DS_Code\\Data_Structure_GA_2402\\Project1\\Array.cpp",
@@ -54,8 +67,7 @@
               "RelativeToolTip": "Project1\\Array.cpp",
               "ViewState": "AgIAAFQAAAAAAAAAAAAAAHIAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-08T07:58:44.422Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-08T07:58:44.422Z"
             },
             {
               "$type": "Document",
@@ -67,8 +79,7 @@
               "RelativeToolTip": "Project1\\customArrayMap.cpp",
               "ViewState": "AgIAAD8AAAAAAAAAAAAAACsAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-08T11:30:59.477Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-08T11:30:59.477Z"
             },
             {
               "$type": "Document",
@@ -81,19 +92,6 @@
               "ViewState": "AQIAABIAAAAAAAAAAAAAACkAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-10-08T07:59:55.825Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ArrayMainProgram.cpp",
-              "DocumentMoniker": "C:\\Users\\user\\OneDrive - Asia Pacific University\\Degree_Level2_Sem2\\Data Structure\\Assignment_DS_Code\\Data_Structure_GA_2402\\Project1\\ArrayMainProgram.cpp",
-              "RelativeDocumentMoniker": "Project1\\ArrayMainProgram.cpp",
-              "ToolTip": "C:\\Users\\user\\OneDrive - Asia Pacific University\\Degree_Level2_Sem2\\Data Structure\\Assignment_DS_Code\\Data_Structure_GA_2402\\Project1\\ArrayMainProgram.cpp",
-              "RelativeToolTip": "Project1\\ArrayMainProgram.cpp",
-              "ViewState": "AgIAAKwAAAAAAAAAAAAuwLkAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-08T11:39:54.32Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
