@@ -5,11 +5,9 @@
 #include <chrono>
 #include <iomanip>
 #include "LinkedList.h"
+#include "Timer.h"
 #include "FileHandler.h"
 
-
-using namespace std;
-using namespace std::chrono;
 
 struct Summary {
     int totalPositive = 0;
@@ -137,10 +135,9 @@ using SortFunction = void (LinkedList::*)();
 // AU YIK HOE (quick sort & binary search)   //
 //                                           //
 // ***************************************** //
-static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, bool searchType, SortFunction sortFunction) {
+static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, bool searchType, SortFunction sortFunction, Timer& searchTimer, Timer& sortTimer) {
 	LinkedList accumulatedWordList;
 	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
-	auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
 
 	for (Node* currentReviewNode = reviewsList.getHead(); currentReviewNode != nullptr; currentReviewNode = currentReviewNode->nextAddress) {
         LinkedList wordList;
@@ -150,10 +147,13 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
 		cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl << endl;
 
 		tokenize(currentReviewNode->review, wordList);
+
+        sortTimer.start();
         (wordList.*sortFunction)();
+        sortTimer.stop();
 
         // Timer for search algorithm
-        auto searchStartTime = high_resolution_clock::now();
+        searchTimer.start();
 
         for (WordNode* currentWord = wordList.getWordHead(); currentWord != nullptr; currentWord = currentWord->nextAddress) {
             if ((positiveList.*searchFunction)(currentWord->word)) {
@@ -168,11 +168,8 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
             }
         }
 
-
-		auto searchEndTime = high_resolution_clock::now();
-		auto searchDuration = duration_cast<microseconds>(searchEndTime - searchStartTime);
-		cout << "Time taken for search: " << searchDuration.count() / 1'000'000.0 << " seconds." << endl;
-		totalSearchTime += searchDuration;
+        searchTimer.stop();
+		cout << "Time taken for search: " << searchTimer.getInterval().count() / 1'000'000.0 << " seconds." << endl;
 
 		cout << positiveCount << " Positive words found:" << endl;
 		positiveList.displayList();
@@ -197,12 +194,11 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
 	summary.totalReviews = reviewCount;
 
 	// Timer for sort algorithm
-	auto sortStartTime = high_resolution_clock::now();
+    sortTimer.start();
 
     (accumulatedWordList.*sortFunction)();
 
-	auto sortEndTime = high_resolution_clock::now();
-	auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
+    sortTimer.stop();
 
 	displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
 
@@ -217,8 +213,9 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
     }
 
 	displayFinalSummary(summary);
-    cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
-    cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
+    cout << fixed << setprecision(4);
+    cout << "Time taken for all search: " << searchTimer.totalTime().count() / 1'000'000.0 << " seconds." << endl;
+    cout << "Time taken for sorting: " << sortTimer.getInterval().count() / 1'000'000.0 << " seconds." << endl;
 }
 
 int main() {
@@ -234,6 +231,8 @@ int main() {
     SearchFunction searchFunction;
     SortFunction sortFunction;
 
+    // Program initiation, choose algorithms
+    // Searching algorithm selection
     cout << "Choose Search Algorithm:\n1. Binary Search\n2. Jump Search\n";
     cin >> choice;
 
@@ -251,6 +250,7 @@ int main() {
         searchFlag = 1;
     }
 
+    // Sorting alogorithm selection
     cout << "Choose Sort Algorithm:\n1. Quick Sort\n2. Merge Sort\n";
     cin >> sortChoice;
 
@@ -265,17 +265,33 @@ int main() {
         sortFunction = &LinkedList::mergeSortByFrequency;
     }
 
+    // Analyze all reviews
+    Timer runTimer, searchTimer, sortTimer;
+    runTimer.start();
 
-    auto startTime = high_resolution_clock::now();
+    processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction, searchTimer, sortTimer);
 
+    runTimer.stop();
 
-    processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction);
+    cout << "Time taken: " << runTimer.totalTime().count() / 1'000'000 / 60 << " minutes and "
+        << (runTimer.totalTime().count() / 1'000'000) % 60 << " seconds." << endl;
 
-	auto endTime = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(endTime - startTime);
+    /*cout << endl << endl;
+    cout << string(100, '*') << endl << endl;
+    cout << "DETAIL ANALYTICS" << endl << endl;
+    cout << string(100, '*') << endl;
 
-	cout << "Time taken: " << duration.count() / 1'000'000 / 60 << " minutes and "
-		<< (duration.count() / 1'000'000) % 60 << " seconds." << endl;
+    int selection;
+    cout << "Select an option: " << endl;
+    cout << "1. Detailed Analysis of Sorting Algorithm" << endl << "2. Detailed Analysis of Searching Algorithm" << endl << "3. Exit program" << endl << endl << "> ";
+    cin >> selection;
+
+    while (selection != 1 && selection != 2 && selection != 3) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Please enter the given option numbers" << endl << "> ";
+        cin >> selection;
+    }*/
 
 	return 0;
 }

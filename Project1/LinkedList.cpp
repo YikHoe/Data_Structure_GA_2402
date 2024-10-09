@@ -9,25 +9,6 @@
 #include <chrono>
 #include "LinkedList.h"
 
-using namespace std::chrono;
-
-class Timer {
-public:
-	Timer() {
-		start = high_resolution_clock::now();
-	}
-
-	~Timer() {
-		stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start);
-		cout << "Duration: " << duration.count() << " microseconds" << std::endl;
-	}
-
-private:
-	time_point<high_resolution_clock> start, stop;
-};
-
-
 Node::Node(string review_string, string rating_given) : review(review_string), rating(rating_given), nextAddress(nullptr) {}
 WordNode::WordNode(string word_string) : word(word_string), frequency(0), nextAddress(nullptr) {}
 
@@ -216,72 +197,58 @@ bool LinkedList::jumpSearch(string word) {
 	// Word not found in the list
 	return false;
 }
-//Jump Through List Function
-//True = Find Max, False == Find Min
-void LinkedList::jumpList(WordNode*& current, int blockSize, int& frequency, bool findMax) {
-	for (int i = 0; i < blockSize && current != nullptr; i++) {
-		// If we are looking for max, compare for max, else compare for min
-		if (findMax) {
-			if (current->frequency > frequency) {
-				frequency = current->frequency;
-			}
+// Helper function to jump ahead in blocks to find the target frequency
+WordNode* LinkedList::jumpList(int frequency, bool isMaxSearch) {
+	int listSize = getSize();
+	int blockSize = sqrt(listSize);  // Calculate block size
+	WordNode* current = word_head;
+	WordNode* prev = nullptr;
+
+	// Jump ahead in blocks
+	while (current != nullptr && ((isMaxSearch && current->frequency < frequency) ||
+		(!isMaxSearch && current->frequency > frequency))) {
+		prev = current;
+		for (int i = 0; i < blockSize && current != nullptr; ++i) {
+			current = current->nextAddress;
 		}
-		else {
-			if (current->frequency < frequency) {
-				frequency = current->frequency;
-			}
-		}
-		current = current->nextAddress;
 	}
+
+	// Return the start of the block where the frequency might be found
+	return (prev == nullptr) ? word_head : prev;
 }
 
-
-
-//Find Max by Jump Search adpated from (GeeksforGeeks, 2024)
+// Jump Search for Maximum Frequency Word
 void LinkedList::jumpFindMax() {
 	if (word_head == nullptr) {
 		return;
 	}
 
-	// Set a fixed block size for jumping
-	int listSize = getSize();
-	int blockSize = round(sqrt(listSize));
-	int maxFrequency = word_tail->frequency;
-	WordNode* current = word_head;
+	int maxFrequency = word_tail->frequency; // Since tail holds max frequency
+	WordNode* blockStart = jumpList(maxFrequency, true); // Jump search for max
 
-	// Jump through the list to find the maximum frequency
-	while (current != nullptr) {
-		jumpList(current, blockSize, maxFrequency, true);  
-	}
-	cout << "Maximum used word in the reviews : ";
-	displayMinMaxWord(maxFrequency);
-
+	// Now, linear search in the identified block for max frequency
+	cout << "Maximum used word in the reviews: ";
+	displayMinMaxWord(blockStart, maxFrequency);
 }
 
-//Find Min by Jump Search adpated from (GeeksforGeeks, 2024)
+// Jump Search for Minimum Frequency Word
 void LinkedList::jumpFindMin() {
 	if (word_head == nullptr) {
 		return;
 	}
 
-	// Set a fixed block size for jumping
-	int listSize = getSize();
-	int blockSize = round(sqrt(listSize));
-	int minFrequency = word_head->frequency;
-	WordNode* current = word_head;
+	int minFrequency = word_head->frequency; // Since head holds min frequency
+	WordNode* blockStart = jumpList(minFrequency, false); // Jump search for min
 
-	// Jump through the list to find the minimum frequency
-	while (current != nullptr) {
-		jumpList(current, blockSize, minFrequency, false);  
-	}
-	cout << "Maximum used word in the reviews : ";
-
-	displayMinMaxWord(minFrequency);
+	// Now, linear search in the identified block for min frequency
+	cout << "Minimum used word in the reviews: ";
+	displayMinMaxWord(blockStart, minFrequency);
 }
 
-//Dislay The Min or Max Word Function
-void LinkedList::displayMinMaxWord(int frequency) {
-	WordNode* current = word_head;
+// Dislay words matching the given frequency in the identified block
+void LinkedList::displayMinMaxWord(WordNode* start, int frequency) {
+	WordNode* current = start;
+
 	while (current != nullptr) {
 		if (current->frequency == frequency) {
 			cout << current->word << ", ";

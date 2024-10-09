@@ -1,2 +1,3 @@
-﻿  FileHandler.cpp
-  Project1.vcxproj -> D:\GitDesktop\projects\Data Structures\Data_Structure_GA_2402\x64\Debug\Project1.exe
+﻿  main.cpp
+D:\GitHub Desktop\Data_Structure_GA_2402\Project1\main.cpp(54,17): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+  Project1.vcxproj -> D:\GitHub Desktop\Data_Structure_GA_2402\x64\Debug\Project1.exe

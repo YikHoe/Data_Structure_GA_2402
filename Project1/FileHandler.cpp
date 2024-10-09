@@ -18,8 +18,8 @@ void readReviewsFromCSV(string filename, LinkedList& list) {
     }
 
     int reviewCount = 0; int maxReviews = 100;
-    while (getline(file, line)) {
-    //while (getline(file, line) && reviewCount < maxReviews) {
+    //while (getline(file, line)) {
+    while (getline(file, line) && reviewCount < maxReviews) {
         size_t commaPos = line.rfind(',');
         if (commaPos != string::npos) {
             string reviewText = line.substr(0, commaPos);

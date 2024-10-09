@@ -1,6 +1,7 @@
 #pragma once
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
+
 using namespace std;
 
 struct Node
@@ -27,7 +28,7 @@ class LinkedList
 
 		//jump searge algorithm
 		WordNode* jumpByBlockSize(int blockSize, WordNode* startNode);
-		void jumpList(WordNode*& current, int blockSize, int& frequency, bool findMax);
+		WordNode* jumpList(int frequency, bool isMaxSearch);
 
 		//merge sorge algorithm
 		WordNode* mergeLists(WordNode* left, WordNode* right);
@@ -53,12 +54,12 @@ class LinkedList
 		void deleteFront();
 		void deleteBack();
 		void displayList();
-		void displayMinMaxWord(int frequency);
 
 		//jump serach
 		bool jumpSearch(string word);
 		void jumpFindMax();
 		void jumpFindMin();
+		void displayMinMaxWord(WordNode* start, int frequency);
 
 		//merge sort
 		WordNode* mergeSort(WordNode* head);
