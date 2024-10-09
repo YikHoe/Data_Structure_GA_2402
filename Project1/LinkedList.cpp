@@ -171,19 +171,8 @@ void LinkedList::displayList() {
 	}
 
 	while (word_temp != nullptr) {
-		cout << word_temp->word << endl;
-		word_temp = word_temp->nextAddress;
-	}
-
-	cout << endl << endl << endl;
-}
-
-void LinkedList::printReport() {
-	WordNode* word_temp = word_head;
-
-	while (word_temp != nullptr) {
 		if (word_temp->frequency != 0) {
-			cout << word_temp->word << " = " << word_temp->frequency << endl;
+			cout << "\t - " << word_temp->word << " = " << word_temp->frequency << endl;
 		}
 
 		word_temp = word_temp->nextAddress;

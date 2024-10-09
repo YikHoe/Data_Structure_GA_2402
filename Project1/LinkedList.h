@@ -53,7 +53,6 @@ class LinkedList
 		void deleteFront();
 		void deleteBack();
 		void displayList();
-		void printReport();
 		void displayMinMaxWord(int frequency);
 
 		//jump serach

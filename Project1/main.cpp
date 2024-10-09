@@ -100,7 +100,7 @@ static void displayCount(int reviewCount, int totalPositiveCount, int totalNegat
     cout << "Total Count of Positive Words = " << totalPositiveCount << endl;
     cout << "Total Count of Negative Words = " << totalNegativeCount << endl;
     cout << "Full Word List (from all reviews, sorted by frequency):" << endl;
-    accumulatedWordList.printReport();
+    accumulatedWordList.displayList();
 }
 
 static void displayFinalSummary(const Summary& summary) {
@@ -137,7 +137,7 @@ using SortFunction = void (LinkedList::*)();
 // AU YIK HOE (quick sort & binary search)   //
 //                                           //
 // ***************************************** //
-static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, SortFunction sortFunction) {
+static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, bool searchType, SortFunction sortFunction) {
 	LinkedList accumulatedWordList;
 	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
 	auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
@@ -146,8 +146,8 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
         LinkedList wordList;
 		int positiveCount = 0, negativeCount = 0;
 
-		cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl;
-		cout << string(120, '=') << endl;
+        cout << string(120, '=') << endl;
+		cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl << endl;
 
 		tokenize(currentReviewNode->review, wordList);
         (wordList.*sortFunction)();
@@ -175,10 +175,10 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
 		totalSearchTime += searchDuration;
 
 		cout << positiveCount << " Positive words found:" << endl;
-		positiveList.printReport();
+		positiveList.displayList();
 
 		cout << negativeCount << " Negative words found:" << endl;
-		negativeList.printReport();
+		negativeList.displayList();
 
 		totalPositiveCount += positiveCount;
 		totalNegativeCount += negativeCount;
@@ -191,6 +191,8 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
         positiveList.resetFrequencies();
         negativeList.resetFrequencies();
         reviewCount++;
+
+        cout << string(120, '=') << endl;
 	}
 	summary.totalReviews = reviewCount;
 
@@ -203,89 +205,18 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
 	auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
 
 	displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
-	accumulatedWordList.jumpFindMax();
-	accumulatedWordList.jumpFindMin();
-	displayFinalSummary(summary);
-    cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
-    cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
-}
 
-static void processReviewsAlgo2(LinkedList& reviews, LinkedList& positiveList, LinkedList& negativeList, Summary& summary) {
-    LinkedList accumulatedWordList;
-    int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
-    auto totalSearchTime = duration_cast<microseconds>(milliseconds(0)); // Initialize to 0
-
-
-    for (Node* currentReviewNode = reviews.getHead(); currentReviewNode != nullptr; currentReviewNode = currentReviewNode->nextAddress) {
-        LinkedList wordList;
-
-        cout << endl << string(100, '=') << endl;
-        cout << "Review " << reviewCount << ": " << currentReviewNode->review << endl << endl;
-        tokenize(currentReviewNode->review, wordList);
-
-        int positiveCount = 0;
-        int negativeCount = 0;
-
-        auto searchStartTime = high_resolution_clock::now();
-
-        for (WordNode* tempWord = wordList.getWordHead(); tempWord != nullptr; tempWord = tempWord->nextAddress) {
-            if (positiveList.binarySearch(tempWord->word)) {
-                positiveCount++;
-                totalPositiveCount++;
-                accumulatedWordList.checkDuped(tempWord->word);
-            }
-
-            if (negativeList.binarySearch(tempWord->word)) {
-                negativeCount++;
-                totalNegativeCount++;
-                accumulatedWordList.checkDuped(tempWord->word);
-            }
-        }
-
-        auto searchEndTime = high_resolution_clock::now();
-        auto searchDuration = duration_cast<microseconds>(searchEndTime - searchStartTime);
-        cout << "Time taken for search: " << searchDuration.count() / 1'000'000.0 << " seconds." << endl;
-        totalSearchTime += searchDuration;
-
-        // Display analysis result for current review
-        // Positive words found
-        cout << positiveCount << " postive words found in the review: " << endl;
-        positiveList.printReport();
-
-        // Negative words found
-        cout << negativeCount << " negative words found in the review: " << endl;
-        negativeList.printReport();
-
-        // Calculate sentimental score based on total positive words and negative words found in review
-        int sentimentScore = calculateSentimentScore(positiveCount, negativeCount);
-        cout << "Sentiment Score (1-5) = " << sentimentScore << endl;
-        cout << "Rating given by User =  " << currentReviewNode->rating << endl;
-
-        // analyze rating of review
-        analyzeScore(sentimentScore, stoi(currentReviewNode->rating), summary);
-        cout << endl << string(100, '=') << endl;
-
-        positiveList.resetFrequencies();
-        negativeList.resetFrequencies();
-        reviewCount++;;
+    if (searchType) {
+        accumulatedWordList.jumpFindMax();
+        accumulatedWordList.jumpFindMin();
+    }
+    else {
+        accumulatedWordList.binaryFindMax();
+        accumulatedWordList.binaryFindMin();
+        cout << "binary search used" << endl;
     }
 
-    summary.totalReviews = reviewCount;
-
-    // Timer for sort algorithm
-    auto sortStartTime = high_resolution_clock::now();
-
-    accumulatedWordList.quickSortByFrequency(); // Assuming this is where sorting happens
-
-    auto sortEndTime = high_resolution_clock::now();
-    auto sortDuration = duration_cast<microseconds>(sortEndTime - sortStartTime);
-
-    displayCount(reviewCount, totalPositiveCount, totalNegativeCount, accumulatedWordList);
-    accumulatedWordList.binaryFindMin();
-    accumulatedWordList.binaryFindMax();
-
-    displayFinalSummary(summary);
-
+	displayFinalSummary(summary);
     cout << "Time taken for all search: " << totalSearchTime.count() / 1'000'000.0 << " seconds." << endl;
     cout << "Time taken for sorting: " << sortDuration.count() / 1'000'000.0 << " seconds." << endl;
 }
@@ -299,6 +230,7 @@ int main() {
 	readWordFromText("negative-words.txt", negativeList);
 
     int choice, sortChoice;
+    bool searchFlag;
     SearchFunction searchFunction;
     SortFunction sortFunction;
 
@@ -307,13 +239,16 @@ int main() {
 
     if (choice == 1) {
         searchFunction = &LinkedList::binarySearch;
+        searchFlag = 0;
     }
     else if(choice == 2) {
         searchFunction = &LinkedList::jumpSearch;
+        searchFlag = 1;
     }
     else {
         cout << "Invalid choice, defaulting to Linear Search." << endl;
         searchFunction = &LinkedList::jumpSearch;
+        searchFlag = 1;
     }
 
     cout << "Choose Sort Algorithm:\n1. Quick Sort\n2. Merge Sort\n";
@@ -334,7 +269,7 @@ int main() {
     auto startTime = high_resolution_clock::now();
 
 
-    processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, sortFunction);
+    processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction);
 
 	auto endTime = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(endTime - startTime);
