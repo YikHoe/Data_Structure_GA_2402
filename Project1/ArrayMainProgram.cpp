@@ -760,23 +760,23 @@ void quickSortAndJumpSearch() {
     cout << "Program Execution time:" << programDuration.count() << "seconds" << endl;
 }
 
-int main()
+int main() 
 {
     int choice;
-    do {
-        displayMenu();  // Show the menu
-        cin >> choice;  // Get the user's choice
 
-        // Validate input
-        if (cin.fail()) {
-            cin.clear(); // clear input buffer to restore cin to a usable state
-            cin.ignore(INT_MAX, '\n'); // ignore last input
-            cout << "Invalid input! Please enter a number between 1 and 5." << endl << endl;
-            continue;
-        }
+    displayMenu();  // Show the menu
+    cin >> choice;  // Get the user's choice
 
-        // Switch case to handle user's choice
-        switch (choice) {
+    // Validate input
+    if (cin.fail()) {
+        cin.clear();  // Clear input buffer to restore cin to a usable state
+        cin.ignore(INT_MAX, '\n');  // Ignore last input
+        cout << "Invalid input! Please enter a number between 1 and 5." << endl;
+        return 1;  // Exit the program on invalid input
+    }
+
+    // Switch case to handle user's choice
+    switch (choice) {
         case 1:
             mergeSortAndBinarySearch();
             break;
@@ -791,13 +791,10 @@ int main()
             break;
         case 5:
             cout << "Exiting program..." << endl;
-            break;
+            return 0;  // End the program
         default:
             cout << "Invalid choice! Please choose between 1 and 5." << endl;
-        }
-
-        cout << endl; // Add some spacing before showing the menu again
-
-    } while (choice != 5); // Exit the loop when the user selects option 5
-    return 0;
+            return 1;  // Exit the program on invalid choice
+    }
+    return 0;  // End the program after executing the selected option
 }
