@@ -60,13 +60,13 @@ void LinkedList::insertFront(string word) {
 
 void LinkedList::insertBack(string review, string rating) {
 	Node* newNode = new Node(review, rating);
-	Node* current = head;
-
-	while (current->nextAddress != nullptr) {
-		current = current->nextAddress;
+	if (tail == nullptr) {
+		head = tail = newNode;
 	}
-
-	current->nextAddress = newNode;
+	else {
+		tail->nextAddress = newNode;
+		tail = newNode;
+	}
 	size++;
 }
 
