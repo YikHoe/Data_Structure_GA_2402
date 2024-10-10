@@ -135,7 +135,8 @@ using SortFunction = void (LinkedList::*)();
 // AU YIK HOE (quick sort & binary search)   //
 //                                           //
 // ***************************************** //
-static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, bool searchType, SortFunction sortFunction, Timer& searchTimer, Timer& sortTimer) {
+static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, 
+    bool searchType, SortFunction sortFunction, Timer& searchTimer, Timer& sortTimer) {
 	LinkedList accumulatedWordList;
 	int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
 
@@ -177,9 +178,6 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
 		cout << negativeCount << " Negative words found:" << endl;
 		negativeList.displayList();
 
-		totalPositiveCount += positiveCount;
-		totalNegativeCount += negativeCount;
-
 		int sentimentScore = calculateSentimentScore(positiveCount, negativeCount);
 		cout << "Sentiment Score (1-5) = " << sentimentScore << endl;
 		cout << "Rating given by User =  " << currentReviewNode->rating << endl;
@@ -218,7 +216,8 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
 }
 
 // retrieve review
-static void analyzeReview(Node* review, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, SearchFunction searchFunction, bool searchType, SortFunction sortFunction) {
+static void analyzeReview(Node* review, LinkedList& positiveList, LinkedList& negativeList, Summary& summary, 
+    SearchFunction searchFunction, bool searchType, SortFunction sortFunction) {
     LinkedList accumulatedWordList;
     int totalPositiveCount = 0, totalNegativeCount = 0, reviewCount = 0;
     LinkedList wordList;
@@ -369,7 +368,8 @@ void systemOperations(int& choice) {
     }
 }
 
-void executeOperation(int operationChoice, LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, bool& searchFlag, SearchFunction& searchFunction, SortFunction& sortFunction, int searchAlgoChoice, int sortAlgoChoice) {
+void executeOperation(int operationChoice, LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, bool& searchFlag, 
+    SearchFunction& searchFunction, SortFunction& sortFunction, int searchAlgoChoice, int sortAlgoChoice) {
     Timer runTimer, searchTimer, sortTimer;
     Summary summary;
     Node* node;
@@ -454,7 +454,8 @@ int main() {
     systemOperations(operationChoice);
     
     // Operation execution
-    executeOperation(operationChoice, reviewsList, positiveList, negativeList, searchFlag, searchFunction, sortFunction, choice, sortChoice);
+    executeOperation(operationChoice, reviewsList, positiveList, negativeList, 
+        searchFlag, searchFunction, sortFunction, choice, sortChoice);
 
 	return 0;
 }
