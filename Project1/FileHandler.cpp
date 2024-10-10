@@ -13,20 +13,15 @@ void readReviewsFromCSV(string filename, LinkedList& list) {
     string line;
 
     // Skip the header line
-    if (getline(file, line)) {
+    getline(file, line);
 
-    }
-
-    int reviewCount = 0; int maxReviews = 100;
     while (getline(file, line)) {
-    //while (getline(file, line) && reviewCount < maxReviews) {
         size_t commaPos = line.rfind(',');
         if (commaPos != string::npos) {
             string reviewText = line.substr(0, commaPos);
             string rating = line.substr(commaPos + 1);
             list.insertFront(reviewText, rating);
         }
-        reviewCount++;
     }
 
     file.close();

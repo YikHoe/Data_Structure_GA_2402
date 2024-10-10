@@ -214,7 +214,7 @@ static void processReviews(LinkedList& reviewsList, LinkedList& positiveList, Li
 	displayFinalSummary(summary);
     cout << fixed << setprecision(4);
     cout << "Time taken for all search: " << searchTimer.totalTime().count() / 1'000'000.0 << " seconds." << endl;
-    cout << "Time taken for sorting: " << sortTimer.getInterval().count() / 1'000'000.0 << " seconds." << endl;
+    cout << "Time taken for sorting: " << sortTimer.getInterval().count() / 1'000.0 << " milliseconds." << endl;
 }
 
 // retrieve review
@@ -274,20 +274,47 @@ static void analyzeReview(Node* review, LinkedList& positiveList, LinkedList& ne
     }
 }
 
-int main() {
-	LinkedList reviewsList, positiveList, negativeList;
-	Summary summary;
+// Detail Algorithm Performance Analytics
+void displayAlgoAnalytics(Timer& searchTimer, Timer& sortTimer, int searchAlgoChoice, int sortAlgoChoice) {
+    string search, sort;
 
-	readReviewsFromCSV("tripadvisor_hotel_reviews.csv", reviewsList);
-	readWordFromText("positive-words.txt", positiveList);
-	readWordFromText("negative-words.txt", negativeList);
+    if (searchAlgoChoice == 1) {
+        search = "BINARY SEARCH";
+    }
+    else {
+        search = "JUMP SEARCH";
+    }
 
-    int choice, sortChoice;
-    bool searchFlag;
-    SearchFunction searchFunction;
-    SortFunction sortFunction;
+    if (sortAlgoChoice == 1) {
+        sort = "QUICK SORT";
+    }
+    else {
+        sort = "MERGE SORT";
+    }
 
-    // Program initiation, choose algorithms
+    cout << string(20, '*') << " Detail Algorithm Time Analytics " << string(20, '*') << endl;
+
+    // time analytics of search algorithm
+    cout << string(10, '=') << string(5, ' ') << search << string(5, ' ') << string(10, '=') << endl;
+    cout << "Total time\t:\t" << searchTimer.totalTime().count() / 1'000'000.0 << " seconds" << endl;
+    cout << "Average time\t:\t" << searchTimer.averageRunTime().count() / 1'000'000.0 << " seconds" << endl;
+    cout << "Max time\t:\t" << searchTimer.maxRunTime().count() / 1'000'000.0 << " seconds" << endl;
+    cout << "Min time\t:\t" << searchTimer.minRunTime().count() / 1'000'000.0 << " seconds" << endl;
+    cout << "Total intervals\t:\t" << searchTimer.getCount() << " times" << endl;
+
+    cout << endl << endl;
+
+    // time analytics of sort algorithm
+    cout << string(10, '=') << string(5, ' ') << sort << string(5, ' ') << string(10, '=') << endl;
+    cout << "Total time\t:\t" << sortTimer.totalTime().count() / 1'000.0 << " milliseconds" << endl;
+    cout << "Average time\t:\t" << sortTimer.averageRunTime().count() / 1'000.0 << " milliseconds" << endl;
+    cout << "Max time\t:\t" << sortTimer.maxRunTime().count() / 1'000.0 << " milliseconds" << endl;
+    cout << "Min time\t:\t" << sortTimer.minRunTime().count() / 1'000.0 << " milliseconds" << endl;
+    cout << "Total intervals\t:\t" << sortTimer.getCount() << " times" << endl;
+}
+
+// Display algorithm option
+void displayAlgoSelectionMenu(int& choice, int& sortChoice, bool& searchFlag, SearchFunction& searchFunction, SortFunction& sortFunction) {
     // Searching algorithm selection
     cout << "Choose Search Algorithm:\n1. Binary Search\n2. Jump Search\n";
     cin >> choice;
@@ -296,7 +323,7 @@ int main() {
         searchFunction = &LinkedList::binarySearch;
         searchFlag = 0;
     }
-    else if(choice == 2) {
+    else if (choice == 2) {
         searchFunction = &LinkedList::jumpSearch;
         searchFlag = 1;
     }
@@ -315,7 +342,7 @@ int main() {
     if (sortChoice == 1) {
         sortFunction = &LinkedList::quickSort;
     }
-    else if (choice == 2) {
+    else if (sortChoice == 2) {
         sortFunction = &LinkedList::mergeSortByFrequency;
     }
     else {
@@ -324,52 +351,55 @@ int main() {
     }
 
     cout << endl;
+}
 
-    int operationChoice;
-
+void systemOperations(int& choice) {
     cout << "Please choose an operation below: " << endl << endl;
     cout << "1. Analyze All Reviews" << endl <<
         "2. Retrieve review" << endl <<
         "3. Analyze new review" << endl <<
         "4. Exit" << endl << endl;
-    cin >> operationChoice;
+    cin >> choice;
 
-    while (operationChoice != 1 && operationChoice != 2 && operationChoice != 3 && operationChoice != 4) {
+    while (choice != 1 && choice != 2 && choice != 3 && choice != 4) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Please enter the given option numbers" << endl << "> ";
-        cin >> operationChoice;
+        cin >> choice;
     }
+}
 
+void executeOperation(int operationChoice, LinkedList& reviewsList, LinkedList& positiveList, LinkedList& negativeList, bool& searchFlag, SearchFunction& searchFunction, SortFunction& sortFunction, int searchAlgoChoice, int sortAlgoChoice) {
     Timer runTimer, searchTimer, sortTimer;
+    Summary summary;
     Node* node;
     string review;
-    Summary sum;
+
     switch (operationChoice)
     {
     case 1:
         // Analyze all reviews
         runTimer.start();
-
         processReviews(reviewsList, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction, searchTimer, sortTimer);
-
         runTimer.stop();
 
         cout << "Time taken: " << runTimer.totalTime().count() / 1'000'000 / 60 << " minutes and "
             << (runTimer.totalTime().count() / 1'000'000) % 60 << " seconds." << endl;
-        break;
         
+        cout << endl;
+
+        // Detail
+        displayAlgoAnalytics(searchTimer, sortTimer, searchAlgoChoice, sortAlgoChoice);
+        break;
     case 2:
         // Retreive specific review
         int id;
-        cout << "Enter review ID >> ";
+        cout << "Enter review ID > ";
         cin >> id;
-
         node = reviewsList.getReview(id);
-
         if (node != nullptr) {
             Summary sum;
-            analyzeReview(node, positiveList, negativeList, sum, searchFunction, searchFlag, sortFunction);
+            analyzeReview(node, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction);
         }
         else {
             cout << "Review not found!" << endl;
@@ -394,13 +424,37 @@ int main() {
         }
 
         node = new Node(review, to_string(rating));
-        analyzeReview(node, positiveList, negativeList, sum, searchFunction, searchFlag, sortFunction);
+        analyzeReview(node, positiveList, negativeList, summary, searchFunction, searchFlag, sortFunction);
         break;
 
     default:
-        cout << string(20, '=') << "PROGRAM TERMINATED" << string(20, '=') << endl;
+        cout << string(20, '=') << "\tPROGRAM TERMINATED\t" << string(20, '=') << endl;
         break;
     }
+}
+
+int main() {
+	LinkedList reviewsList, positiveList, negativeList;
+
+	readReviewsFromCSV("tripadvisor_hotel_reviews.csv", reviewsList);
+	readWordFromText("positive-words.txt", positiveList);
+	readWordFromText("negative-words.txt", negativeList);
+
+    int choice, sortChoice;
+    bool searchFlag;
+    SearchFunction searchFunction;
+    SortFunction sortFunction;
+
+    // Program initiation
+    // Choose searching and sorting algorithms
+    displayAlgoSelectionMenu(choice, sortChoice, searchFlag, searchFunction, sortFunction);
+
+    // System operations menu
+    int operationChoice;
+    systemOperations(operationChoice);
+    
+    // Operation execution
+    executeOperation(operationChoice, reviewsList, positiveList, negativeList, searchFlag, searchFunction, sortFunction, choice, sortChoice);
 
 	return 0;
 }

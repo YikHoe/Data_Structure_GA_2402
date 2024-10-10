@@ -23,7 +23,7 @@ class LinkedList
 {
 	private:
 		Node* head, * tail;
-		int size = 0;
+		int size;
 		WordNode* word_head, * word_tail;
 
 		//jump searge algorithm

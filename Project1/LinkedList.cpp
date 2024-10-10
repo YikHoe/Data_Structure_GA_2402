@@ -12,7 +12,7 @@
 Node::Node(string review_string, string rating_given) : review(review_string), rating(rating_given), nextAddress(nullptr) {}
 WordNode::WordNode(string word_string) : word(word_string), frequency(0), nextAddress(nullptr) {}
 
-LinkedList::LinkedList() : head(nullptr), tail(nullptr), word_head(nullptr), word_tail(nullptr) {}
+LinkedList::LinkedList() : head(nullptr), tail(nullptr), word_head(nullptr), word_tail(nullptr), size(0) {}
 
 LinkedList::~LinkedList() {
 	Node* current = head;
@@ -33,7 +33,6 @@ LinkedList::~LinkedList() {
 	head = tail = nullptr;
 	word_head = word_tail = nullptr;
 }
-
 
 void LinkedList::insertFront(string review, string rating) {
 	Node* newNode = new Node(review, rating);
@@ -151,8 +150,8 @@ Node* LinkedList::getReview(int id) {
 	}
 	
 	Node* current = head;
-	int sizeCnt = 1;
-	while (sizeCnt != id) {
+	int sizeCnt = 0;
+	while (sizeCnt < id && current != nullptr) {
 		current = current->nextAddress;
 		sizeCnt++;
 	}
@@ -188,7 +187,6 @@ WordNode* LinkedList::jumpByBlockSize(int blockSize, WordNode* startNode) {
 	}
 	return current;
 }
-
 
 bool LinkedList::jumpSearch(string word) {
 	// Set a fixed block size for jumping
@@ -362,6 +360,7 @@ void LinkedList::mergeSortByFrequency() {
 		word_tail = temp; // Update the tail
 	}
 }
+
 // Quick sort
 WordNode* LinkedList::partition(WordNode* head, WordNode* tail) {
 	if (head == tail) {
@@ -570,6 +569,7 @@ void LinkedList::checkDuped(string word) {
 	}
 
 	word_head = newNode;
+	size++;
 }
 
 Node* LinkedList::getHead() {
