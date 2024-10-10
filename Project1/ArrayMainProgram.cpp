@@ -12,7 +12,7 @@
 //      https://stackoverflow.com/a/58838379
 
 // Jump Search Algorithm | Studytonight. (n.d.).
-    https://www.studytonight.com/data-structures/jump-search-algorithm
+//      https://www.studytonight.com/data-structures/jump-search-algorithm
 
 #include <iostream>
 #include "Array.hpp"
@@ -167,7 +167,7 @@ void binarySearchForWords(Array<string>& words, string& word, int& wordCount, Ar
 // Count the positive and negative word for each review
 void countPositiveNegativeWords(const string& review, Array<string>& positiveWords, Array<string>& negativeWords,
     int& positiveCount, int& negativeCount, Array<string>& foundPositiveWords, Array<string>& foundNegativeWords, int& i, 
-    customArrayMap<string, int>& wordFreq, microseconds& totalSearchDuration, bool& jSearch) {
+    customArrayMap<string, int>& wordFreq, milliseconds& totalSearchDuration, bool& jSearch) {
 
     // Reset the positive and negative word count for each review
     positiveCount = 0;
@@ -227,7 +227,7 @@ float calculateSentimentScore(int positiveCount, int negativeCount) {
 // Display sentiment summary
 void summarizeSentiment(customArrayMap<string, int>& hotelReviews, Array<string>& positiveWords, Array<string>& negativeWords,
     int& totalPositiveWords, int& totalNegativeWords, Array<int>& reviewRate, float& matchEvaluation, float& unmatchEvaluation, customArrayMap<string, int>& wordFreq,
-    microseconds& totalSearchDuration, bool& jSearch)
+    milliseconds& totalSearchDuration, bool& jSearch)
 {
     for (int i = 0; i < hotelReviews.getSize(); i++) {
         string review = hotelReviews.getByIndex(i).getKey();
@@ -583,7 +583,7 @@ void mergeSortAndBinarySearch() {
     Array<string> minWords, maxWords;
     bool jSearch = false;
     // Initialize totalSearchDuration as 0 microseconds
-    microseconds totalSearchDuration = microseconds(0);
+    milliseconds totalSearchDuration = milliseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
@@ -630,7 +630,7 @@ void mergeSortAndJumpSearch() {
     Array<string> minWords, maxWords;
     bool jSearch = true;
     // Initialize totalSearchDuration as 0 microseconds
-    microseconds totalSearchDuration = microseconds(0);
+    milliseconds totalSearchDuration = milliseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
@@ -676,7 +676,7 @@ void quickSortAndBinarySearch() {
     Array<string> minWords, maxWords;
     bool jSearch = false;
     // Initialize totalSearchDuration as 0 microseconds
-    microseconds totalSearchDuration = microseconds(0);
+    milliseconds totalSearchDuration = milliseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
@@ -722,7 +722,7 @@ void quickSortAndJumpSearch() {
     Array<string> minWords, maxWords;
     bool jSearch = true;
     // Initialize totalSearchDuration as 0 microseconds
-    microseconds totalSearchDuration = microseconds(0);
+    milliseconds totalSearchDuration = milliseconds(0);
     auto startProgram = high_resolution_clock::now(); //start the timer
     readWordsFromFile("positive-words.txt", positiveWords);
     readWordsFromFile("negative-words.txt", negativeWords);
