@@ -1,8 +1,30 @@
-﻿//GeeksforGeeks. (2024, July 31).Search an element in a Linked List(Iterative and Recursive).GeeksforGeeks.
+﻿// References and sources of adapted codes
+// 
+// Agarwal, S. (2021, November 11). Binary Search on Linked List. Naukri. 
+//		https://www.naukri.com/code360/library/binary-search-on-linked-list
+// 
+// GeeksforGeeks. (2013, June 28). QuickSort on Singly Linked List. GeeksforGeeks.
+//		https://www.geeksforgeeks.org/quicksort-on-singly-linked-list/
+// 
+// GeeksforGeeks.(2018, March 21). Binary Search on Singly Linked List. GeeksforGeeks. 
+//		https://www.geeksforgeeks.org/binary-search-on-singly-linked-list/
+// 
+// GeeksforGeeks. (2024a, July 31).Search an element in a Linked List(Iterative and Recursive).GeeksforGeeks.
 //      https://www.geeksforgeeks.org/search-an-element-in-a-linked-list-iterative-and-recursive/
-//GeeksforGeeks. (2024b, September 4).Find smallest and largest elements in singly linked list.GeeksforGeeks.
+//
+// GeeksforGeeks. (2024b, September 4).Find smallest and largest elements in singly linked list.GeeksforGeeks.
 //      https://www.geeksforgeeks.org/find-smallest-largest-elements-singly-linked-list/
-//Merge Sort a Linked List. (n.d.).Stack Overflow.
+// 
+// Iyer, S. (2024, September 25). Hoare’s vs. Lomuto’s Partition Scheme in Quicksort. Interview Kickstart LLC. 
+//		https://www.interviewkickstart.com/blogs/learn/hoares-vs-lomuto-partition-scheme-quicksort
+// 
+// Jain, A. (2021, September 7). Linked List | Binary search on Linked List. PrepBytes Blog. 
+//		https://www.prepbytes.com/blog/linked-list/binary-search-on-linked-list/
+// 
+// Jain, D. (2016, March 30). QuickSort Tail Call Optimization (Reducing worst case space to Log n ). GeeksforGeeks. 
+//		https://www.geeksforgeeks.org/quicksort-tail-call-optimization-reducing-worst-case-space-log-n/
+// 
+// Merge Sort a Linked List. (n.d.).Stack Overflow.
 //      https://stackoverflow.com/questions/7685/merge-sort-a-linked-list
 
 #include <iostream>
@@ -361,6 +383,7 @@ void LinkedList::mergeSortByFrequency() {
 	}
 }
 
+// Quicksort algorithms adapted and referenced from GeeksforGeeks (2013), Iyer (2024), Jain (2016)
 // Quick sort
 WordNode* LinkedList::partition(WordNode* head, WordNode* tail) {
 	if (head == tail) {
@@ -421,6 +444,7 @@ void LinkedList::quickSort() {
 	sortRecur(word_head, word_tail);
 }
 
+// Binary search algorithms adapted and referenced from Agarwal (2021), GeeksforGeeks (2018), Jain (2021)
 // Binary search
 WordNode* LinkedList::getMiddle(WordNode* head, WordNode* tail) {
 	if (head == nullptr || head == tail) {
@@ -539,6 +563,7 @@ void LinkedList::binaryFindMin() {
 
 	cout << endl << endl;
 }
+// END of binary search algorithms
 
 void LinkedList::resetFrequencies() {
 	WordNode* current = word_head;
