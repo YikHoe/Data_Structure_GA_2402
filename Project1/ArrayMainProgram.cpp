@@ -561,11 +561,9 @@ void displaySummary(Array<int>& reviewRate, float& matchEvaluation, float& unmat
     int positiveReview = reviewRate.get(0);
     int neutralReview = reviewRate.get(1);
     int negativeReview = reviewRate.get(2);
-    //milliseconds averageSearchDuration;
     float evaluationAccuracy = (matchEvaluation / (matchEvaluation + unmatchEvaluation)) * 100;
     cout << "----------------------------Final Summary--------------------------------" << endl;
     float totalReview = matchEvaluation + unmatchEvaluation;
-    //averageSearchDuration = (totalSearchDuration.count() / totalReview);
     auto averageSearchDuration = totalSearchDuration/ totalReview;
     if (jSearch) {
         cout << "----------------------------Jump Search--------------------------------" << endl;
@@ -608,7 +606,6 @@ void mergeSortAndBinarySearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
-    int totalReview;
     bool jSearch = false;
     milliseconds maximumSearch = milliseconds::min();
     milliseconds minimumSearch = milliseconds::max();
@@ -652,7 +649,6 @@ void mergeSortAndJumpSearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
-    int totalReview;
     bool jSearch = true;
     milliseconds maximumSearch = milliseconds::min();
     milliseconds minimumSearch = milliseconds::max();
@@ -696,7 +692,6 @@ void quickSortAndBinarySearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
-    int totalReview;
     bool jSearch = false;
     milliseconds maximumSearch = milliseconds::min();
     milliseconds minimumSearch = milliseconds::max();
@@ -740,7 +735,6 @@ void quickSortAndJumpSearch() {
     customArrayMap<string, int> hotelReviews;
     customArrayMap<string, int> wordFrequency;
     Array<string> minWords, maxWords;
-    int totalReview;
     bool jSearch = true;
     milliseconds maximumSearch = milliseconds::min();
     milliseconds minimumSearch = milliseconds::max();
