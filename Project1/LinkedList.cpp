@@ -9,6 +9,9 @@
 // GeeksforGeeks.(2018, March 21). Binary Search on Singly Linked List. GeeksforGeeks. 
 //		https://www.geeksforgeeks.org/binary-search-on-singly-linked-list/
 // 
+// Jump Search Algorithm. (n.d.). 
+//		https://www.tutorialspoint.com/data_structures_algorithms/jump_search_algorithm.htm#:~:text=The%20time%20complexity%20of%20the,complexity%20is%20O(1).
+// 
 // GeeksforGeeks. (2024a, July 31).Search an element in a Linked List(Iterative and Recursive).GeeksforGeeks.
 //      https://www.geeksforgeeks.org/search-an-element-in-a-linked-list-iterative-and-recursive/
 //
@@ -25,7 +28,9 @@
 //		https://www.geeksforgeeks.org/quicksort-tail-call-optimization-reducing-worst-case-space-log-n/
 // 
 // Merge Sort a Linked List. (n.d.).Stack Overflow.
-//      https://stackoverflow.com/questions/7685/merge-sort-a-linked-list
+//      https://stackoverflow.com/questions/7685/merge-sort-a-linked-list/
+// Yadav, B. (2022, December 19). Doubly Linked List Data Structure In C++ - Scaler Topics. Scaler Topics. 
+//		https://www.scaler.com/topics/doubly-linked-list-cpp/
 
 #include <iostream>
 #include <chrono>
@@ -202,6 +207,8 @@ void LinkedList::displayList() {
 	cout << endl << endl << endl;
 }
 
+//Jump Search
+//Helper for Jump Search adapted from Jump Search Algorithm. (n.d.)
 WordNode* LinkedList::jumpByBlockSize(int blockSize, WordNode* startNode) {
 	WordNode* current = startNode;
 	for (int i = 0; i < blockSize && current != nullptr; i++) {
@@ -210,6 +217,7 @@ WordNode* LinkedList::jumpByBlockSize(int blockSize, WordNode* startNode) {
 	return current;
 }
 
+//Jump Search Algorithm adapted from Jump Search Algorithm. (n.d.)
 bool LinkedList::jumpSearch(string word) {
 	// Set a fixed block size for jumping
 	int listSize = getSize();
@@ -297,6 +305,7 @@ void LinkedList::displayMinMaxWord(WordNode* start, int frequency) {
 	cout << endl;
 }
 
+//Merge Sort
 //Split List Function adpated from (Merge Sort a Linked List, n.d.)
 WordNode* LinkedList::splitList(WordNode* head) {
 	if (head == nullptr || head->nextAddress == nullptr) {
