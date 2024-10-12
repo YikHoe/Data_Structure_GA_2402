@@ -29,8 +29,6 @@
 // 
 // Merge Sort a Linked List. (n.d.).Stack Overflow.
 //      https://stackoverflow.com/questions/7685/merge-sort-a-linked-list/
-// Yadav, B. (2022, December 19). Doubly Linked List Data Structure In C++ - Scaler Topics. Scaler Topics. 
-//		https://www.scaler.com/topics/doubly-linked-list-cpp/
 
 #include <iostream>
 #include <chrono>

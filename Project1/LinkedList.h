@@ -1,13 +1,9 @@
-// Yadav, B. (2022, December 19). Doubly Linked List Data Structure In C++ - Scaler Topics. Scaler Topics. 
-//		https://www.scaler.com/topics/doubly-linked-list-cpp/
-
 #pragma once
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
 using namespace std;
 
-//Linked List Structure adapted from (Yadav, 2022)
 struct Node
 {
 	string review, rating;

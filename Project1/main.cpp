@@ -21,11 +21,11 @@ struct Summary {
 static void tokenize(string review, LinkedList& list) {
     string word = "";
     for (char c : review) {
-        // Manually check if the character is alphanumeric
+        // check alphanumeric
         if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-            // Manually convert to lowercase if it's an uppercase letter
+            // convert to lowercase 
             if (c >= 'A' && c <= 'Z') {
-                c = c + 32; // Convert to lowercase by adding ASCII offset
+                c = c + 32;
             }
             word += c;
         }
